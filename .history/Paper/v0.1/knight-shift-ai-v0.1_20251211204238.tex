@@ -1,0 +1,317 @@
+% !TeX program = xelatex
+% !TeX encoding = UTF-8
+\documentclass[conference]{IEEEtran}
+
+% *** LANGUAGE / ENCODING PACKAGES ***
+\usepackage{xeCJK}        % For Chinese characters
+\usepackage[english]{babel}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{cite}
+\usepackage{hyperref}
+
+\setCJKmainfont{SimSun}
+
+% Optional: line spacing inside drafts (comment out in final)
+% \usepackage{setspace}
+% \doublespacing
+
+\begin{document}
+
+\title{Design of a Multi-Level Chess AI System and performance evaluation of its difficulty levels}
+
+\author{
+\IEEEauthorblockN{Grey(2430034039)}
+\IEEEauthorblockA{
+Faculty of Science and Technology, BNBU\\
+Email: u430034039@mail.uic.edu.cn}
+}
+
+\maketitle
+
+\begin{abstract}
+This paper presents a multi-level chess AI system developed as part of the Artificial Intelligence Workshop course. 
+The system implements four distinct difficulty levels by progressively increasing search depth and evaluation complexity.
+Our approach combines classical tree search algorithms with two kinds of evaluation heuristics: theory-driven positional heuristics inspired by common chess engines, and CNN-based learned evaluators of/from XXXXX. 
+Difficulty scaling is achieved through systematic variations in search depth, pruning settings, and evaluation complexity, as well as deliberate randomization in move selection at lower levels. 
+We conduct extensive self-play and human-AI experiments, and apply basic statistical analysis to quantify performance differences between levels. 
+The results show clear separation in playing strength, with the strongest engine achieving substantially higher win rates against lower-level opponents while maintaining reasonable computational efficiency. 
+The system supports multiple game modes, including human-versus-machine, machine-versus-machine, machine-versus-machine with limited computation time, and batch test mode, enabling both interactive play and reproducible evaluation. 
+This work demonstrates the effectiveness of classical search-based methods in resource-constrained settings and provides a foundation for future extensions aimed at making chess AI more time-efficient and energy-aware on limited hardware.
+
+\end{abstract}
+
+\begin{IEEEkeywords}
+Game-tree search, Minimax, Alpha--Beta pruning, Heuristic evaluation, Chess AI, Difficulty scaling
+\end{IEEEkeywords}
+
+\section{Introduction}
+Chess was among the first board games in which computer programs (agents) rivaled and eventually surpassed top human players, making it a classic subject for research in artificial intelligence for decades.
+
+Early work such as Shannon's 1950 paper ``Programming a Computer for Playing Chess''~\cite{shannon1950} emphasized that chess agents are prototypes for more general ``thinking machines'': 
+systems that could, in principle, make complex, strategic decisions like human beings. In this view, computer chess is not an end in itself, 
+but a concrete sandbox for studying how machines can make complex, strategic decisions under uncertainty and resource constraints.
+Building on this tradition, modern chess engines combine powerful search algorithms with sophisticated evaluation functions, and continue to provide a platform for artificial intelligence research.
+
+Most contemporary approaches focus on maximizing playing strength at the expense of computational efficiency. 
+However, in many circumstances, we may want agents with \emph{adjustable} strength that can provide meaningful practice for human players or that can operate effectively under tight time and hardware constraints.
+
+This raises the question of how to design chess AI systems that expose multiple difficulty levels in a principled way while remaining computationally efficient.
+In this work, we address these challenges by designing a multi-level chess AI system built on classical tree search algorithms with two families of evaluation functions: 
+theory-driven positional heuristics inspired by common chess engines and researched in the literature, and CNN-based learned evaluators of board positions from self-plays. 
+The system exposes four difficulty levels through systematic control of search depth, pruning aggressiveness, evaluation complexity, and rationale in move selection. 
+We further conduct both self-play and human--AI experiments, with and without strict time limits on search, and use basic statistical analysis
+to quantify the performance differences between levels and to study the relationship between playing strength and computational effort for different difficulty levels.
+
+The main contributions of this paper are as follows:
+\begin{itemize}
+    \item We design and implement a multi-level chess AI system that has four distinct difficulty levels by varying search depth, pruning aggressiveness, evaluator choice, and randomness in move selection, and supports human-versus-machine(H2M), machine-versus-machine(M2M), M2M with limited computation time, and M2M batch-testing modes for training and benchmarking.
+    \item We propose a plug-and-play hybrid evaluation framework that combines theory-driven positional heuristics with CNN-based board evaluators and integrates them with classical alpha--beta search and move ordering for practical use under tight resource budgets.
+    \item We provide an experimental and statistical study (self-play and human--AI, with and without strict time limits) reporting win rates, searched nodes, and game lengths to quantify the trade-off between playing strength and computational cost across difficulty levels.
+    \item We implement a lightweight frontend/UI (desktop or browser) that renders the board, supports timing/undo/hint controls, logs moves, and interfaces with the backend engine via simple APIs to enable easy interaction and evaluation.
+\end{itemize}
+
+\section{Introduction}
+Chess was among the first board games in which computer programs rivaled and eventually surpassed top human players, making it a classic subject of research in artificial intelligence for decades.
+
+Early work such as Shannon's 1950 paper ``Programming a Computer for Playing Chess''~\cite{shannon1950} emphasized that chess agents are prototypes for more general ``thinking machines'': 
+systems that could, in principle, perform complex strategic decisions like human beings. In this view, computer chess is not an end in itself, 
+but a concrete sandbox for studying how machines can make complex, strategic decisions under uncertainty and resource constraints.
+Building on this tradition, modern chess engines combine powerful search algorithms with sophisticated evaluation functions, and continue to provide a platform for studying the efficiency and limitations of classical AI methods.
+
+Most contemporary chess engines and research efforts focus on maximizing playing strength, often assuming ample computational resources and targeting superhuman performance. 
+However, in many educational and practical settings, the goal is different: we want agents with \emph{adjustable} strength that can provide meaningful practice for human players and that can operate effectively under tight time and hardware constraints.
+Designing such a system raises several challenges, including how to expose multiple difficulty levels in a principled way, how to balance search depth and evaluation complexity, and how to quantify the trade-off between playing strength and computational cost.
+
+In this work, we address these challenges by designing a multi-level chess AI system built on classical tree-search algorithms and two families of evaluation functions: 
+theory-driven positional heuristics inspired by common chess engines, and CNN-based learned evaluators of board positions and local patterns.
+The system exposes four difficulty levels through systematic control of search depth, pruning aggressiveness, evaluation complexity, and controlled randomness in move selection.
+We further conduct both self-play and human--AI experiments, with and without strict time limits, and use basic statistical analysis of win rates and game lengths to quantify performance differences between levels and to study the relationship between playing strength and computational effort.
+
+The main contributions of this paper are as follows:
+\begin{itemize}
+    \item We design and implement a multi-level chess AI system that offers four distinct difficulty levels and supports multiple game modes, including human-versus-machine, machine-versus-machine, limited-time play, and batch testing.
+    \item We propose a hybrid evaluation framework that combines theory-driven positional heuristics with CNN-based learned evaluators, and integrate it with classical tree-search techniques for practical use under resource constraints.
+    \item We provide an experimental and statistical study of the system's behavior across difficulty levels, highlighting the trade-off between playing strength and computational cost in resource-constrained settings.
+\end{itemize}
+
+A
+
+This section sets up the \emph{context, motivation, and contributions} of the work.
+
+本节是「地图+动机」，回答：\emph{Where are we? Why this problem? What do we do in this paper?}
+
+推荐结构（每一小点可以是 1--2 段）：
+
+\begin{enumerate}
+    \item \textbf{Background / 研究背景}：用英文描述棋类/博弈 AI 的一般背景，例如在游戏产业、研究和教学中的重要性。中文可以做思路备注：交代这是一个 course project，兼顾实践和学习。
+    \item \textbf{Problem Statement / 问题描述}：说明你具体做什么任务，比如“设计一个支持多难度分级的 Gomoku AI agent，能进行 H2M 和 M2M 对弈”。清楚限定范围（棋种、规则、平台）。
+    \item \textbf{Challenges / 难点}：列出 2--3 个核心挑战，例如分支因子大、搜索深度和计算资源冲突、评估函数难设计、难度分级难以量化等。用英文条列，中文在句子后补充说明。
+    \item \textbf{Approach Overview / 方案概述}：用 1 段话 high-level 描述你采用的总体方案（Minimax + Alpha--Beta + 自定义 heuristic + 多深度控制等），不要进入实现细节。
+    \item \textbf{Contributions / 贡献}：用 bullet 列出 2--4 条 contribution，例如：
+    \begin{itemize}
+        \item We implement a multi-level AI agent for XXX with clearly separable playing strengths.（实现多等级棋力 AI）
+        \item We design and analyze heuristic evaluation functions tailored to the game structure.（定制评估函数并分析）
+        \item We conduct systematic experiments to study the trade-off between search depth and playing strength.（实验分析深度与棋力/性能权衡）
+    \end{itemize}
+\end{enumerate}
+
+注意：Introduction 不要变成 related work，也不要堆满细节和公式。
+\section{Literature Review}
+This section reviews \emph{existing methods and studies} relevant to your project and positions your work among them.
+
+本节是文献综述（Related Work / Literature Review），目标是「别人怎么玩 + 有什么问题 + 你准备怎么玩得更好」。
+
+推荐写作步骤：
+
+\begin{enumerate}
+    \item \textbf{Organize by Themes / 按主题分块，而不是按论文顺序}：
+
+    建议分成 2--3 个小节，例如：
+    \begin{itemize}
+        \item Game-tree search algorithms (Minimax, Negamax, Alpha--Beta, MCTS, etc.)
+        \item Heuristic evaluation in board-game AI
+        \item Difficulty scaling and opponent modeling in game AI
+    \end{itemize}
+
+    每个小节先用英文一两句说明主题，再总结相关工作。中文用于提示：解释本小节的逻辑和筛选标准。
+
+    \item \textbf{Three-Sentence Rule / 每篇文献“三句话原则”}：
+    对于重要文献，尽量用 3 句话概括：
+    \begin{itemize}
+        \item 做了什么（问题与方法）
+        \item 怎么做（关键技术点）
+        \item 好坏点和与你工作的关系（优点/局限/启发）
+    \end{itemize}
+
+    这三句可以完全用英文，括号内配一句简短中文解释写作意图。
+
+    \item \textbf{Critical Analysis / 批判性分析而不是“流水账”}：
+    合理比较不同方法的优缺点，指出例如：
+    \begin{itemize}
+        \item 传统手写 heuristic 的可解释性 vs 深度学习评估函数的性能优势；
+        \item 只调搜索深度的难度分级会导致棋力跨度不均匀；
+        \item 一些工作缺乏与人类体验相关的评估指标等。
+    \end{itemize}
+
+    \item \textbf{Identify Gaps / 引出研究空缺}：
+    用一段总结：
+    \begin{itemize}
+        \item 哪些问题已经被充分研究（你就少做）；
+        \item 哪些方面相对薄弱（你会重点补足），例如：在教学项目场景下对多等级棋力和资源受限 AI 的系统分析较少。
+    \end{itemize}
+    最后自然过渡到下一节 Methodology，说明你将如何在这些文献基础上设计自己的系统。
+\end{enumerate}
+
+\section{Methodology}
+This section explains the \emph{theoretical design and algorithms} used in your work, without going into low-level implementation details.
+
+本节是「方法论/算法设计」，偏抽象（conceptual + mathematical），而不讨论具体代码文件。
+
+可以分为如下子节（仅示例）：
+
+\subsection{Game Formalization}
+用英文形式化游戏模型，例如 state, action, transition, terminal condition 等。可以写成：
+
+\begin{itemize}
+    \item Define the board representation, players, legal moves, and winning conditions.
+    \item Optionally introduce a game tree notation, where nodes represent states and edges represent moves.
+\end{itemize}
+
+中文注释：说明这是在帮读者建立一个统一的符号与问题设定（问题建模）。
+
+\subsection{Search Algorithm}
+在此描述 Minimax/Negamax/Alpha--Beta 之类：
+
+\begin{itemize}
+    \item 用文字 + 必要的伪代码（pseudo-code）展示递归结构和剪枝逻辑。
+    \item 解释算法复杂度和对分支因子、深度的敏感性（大 O 分析可选）。
+    \item 中文可以解释写作层面：突出「为什么选择这个算法」以及「与课程内容的对应关系」。
+\end{itemize}
+
+\subsection{Heuristic Evaluation Function}
+介绍你的评估函数设计：
+
+\begin{itemize}
+    \item 用数学表达式给出评分公式，例如 $Eval(s) = w_1 f_1(s) + w_2 f_2(s) + \dots$。
+    \item 定义各个特征 $f_i(s)$ 的含义（比如连珠数、威胁模式、材料优势等）。
+    \item 讨论权重 $w_i$ 的设定方式（经验设定、简单调参、数据统计等）。
+    \item 中文写作提示：强调「为什么这些特征合理」「与文献中的特征设计有何联系」。
+\end{itemize}
+
+\subsection{Difficulty Design}
+说明多等级难度如何实现（difficulty scaling）：
+
+\begin{itemize}
+    \item For each level, specify search depth, evaluation complexity, randomness, and any additional constraints.
+    \item Explain the rationale behind the design, e.g., ``Level 1 trades playing strength for faster response time to suit beginners.''
+    \item 中文提示：这里要让设计看起来有理论依据，而不是“瞎调参数”，可以引用文献中的典型做法作为支撑。
+\end{itemize}
+
+\section{Implementation}
+This section describes how the methodology is turned into an actual software system.
+
+本节偏工程实现（“How we built it”），可以包含结构图、模块划分等。
+
+建议内容：
+
+\begin{itemize}
+    \item \textbf{Architecture Overview / 系统架构总览}：用一张图或一小段，说明前端、后端、AI 引擎、数据模块之间的关系。中文提示：清楚展示数据流（棋局状态如何传递、AI 如何被调用）。
+    \item \textbf{Modules / 核心模块}：用小段分别介绍各个模块，例如 \texttt{Board}, \texttt{Search}, \texttt{Evaluation}, \texttt{UI} 等。说明每个模块的职责，而不是列代码。
+    \item \textbf{Technologies / 使用的技术栈}：列出编程语言、框架和主要第三方库，解释选择理由（简洁、课程要求、易于部署等）。
+    \item \textbf{Game Modes / 对战模式实现}：说明 H2M（human vs. machine）、M2M（machine vs. machine）是如何在架构中实现的，如何记录对局数据用于实验。
+    \item \textbf{Frontend/UI Design / 前端设计}：简述棋盘渲染、走子交互、计时/悔棋/提示按钮、走子记录（PGN/简单列表）、以及前端如何调用后端 API/引擎（同步/异步、长轮询或本地调用）。若采用桌面 UI（如 PyQt/Tkinter）或浏览器 UI（如 React/Vue），说明选择理由与部署方式。
+\end{itemize}
+
+写作提示：前端部分保持高层描述，强调交互流与状态同步，而非低层代码实现；可用一张示意图表示前端与后端的事件流（用户输入 $\rightarrow$ 请求引擎 $\rightarrow$ 返回最佳着法/评估 $\rightarrow$ 更新棋盘与日志）。
+
+写作时注意：尽量用结构图和清晰的小节标题帮助读者快速理解整体系统，而不是陷入具体代码细节。
+
+\section{Experimental Results}
+This section presents the experiments and quantitative/qualitative results.
+
+本节展示实验设计与结果，是支撑你结论的「证据」。
+
+建议分两块：
+
+\subsection{Experimental Setup}
+介绍实验设置：
+
+\begin{itemize}
+    \item \textbf{Environment / 实验环境}：例如 CPU 型号、内存、操作系统、编程语言版本等。
+    \item \textbf{Baselines / 基线对手}：例如 random agent、greedy one-step agent 或文献中的实现。中文提示：说明选择这些 baselines 的合理性。
+    \item \textbf{Protocols / 对战设定}：例如每组对战 50 盘，双方轮流执先，时间限制等。
+\end{itemize}
+
+\subsection{Results and Observations}
+展示并分析结果：
+
+\begin{itemize}
+    \item 使用表格和图（胜率、平均步数、搜索节点数、思考时间等）呈现数据。
+    \item 每张图/表后用 1--2 段英文解释关键观察点，例如强度随深度上升、不同 level 的分层是否明显。
+    \item 中文提示：避免只“报数字”，要回答“这些结果说明了什么？是否和预期一致？如不一致，原因可能是什么？”。
+\end{itemize}
+
+\section{Performance Analysis}
+This section goes beyond raw numbers to interpret the performance and trade-offs.
+
+本节是「解释与剖析」，比上一节更偏“为什么”。
+
+可以包括：
+
+\begin{itemize}
+    \item \textbf{Depth vs. Strength / 搜索深度与棋力的关系}：讨论深度增加带来的胜率提升和时间开销，指出收益递减点。
+    \item \textbf{Heuristic Impact / 评估函数影响}：对比不同评估配置下的表现，说明哪些特征最关键。
+    \item \textbf{Difficulty Separation / 难度分级有效性}：说明 Level 1,2,3 之间是否形成清晰的棋力阶梯，并结合数据解释。
+    \item \textbf{Limitations / 局限性}：诚实讨论系统的不足，如对特定开局脆弱、对长远战术不敏感等。中文提示：这部分为后面的 Future Work 做铺垫。
+\end{itemize}
+
+写作时：多用“因果语句”和“对比语句”，例如“Because we increase X, the agent tends to Y…”，而不仅是“X is bigger than Y.”。
+
+\section{Future Work}
+This section outlines plausible extensions and improvements.
+
+本节写「如果有更多时间/资源，我们会做什么」，要合理、不虚。
+
+推荐写：
+
+\begin{itemize}
+    \item 把现有系统扩展到更复杂的棋类或更大棋盘；
+    \item 引入强化学习或深度学习来自动学习评估函数；
+    \item 优化工程性能（C++ 重写、并行搜索、GPU 加速等）；
+    \item 加入更“人性化”的错误模型，提升人机对战体验。
+\end{itemize}
+
+中文提示：未来工作不要过于空泛，要与当前系统的局限性一一对应，看起来像是自然的下一步，而不是另一个完全无关的新项目。
+
+\section{Conclusion}
+This section briefly summarizes what has been done and what has been learned.
+
+本节是“收尾总结”，通常 1--3 段。
+
+建议结构：
+
+\begin{itemize}
+    \item \textbf{Restate the Problem / 重申问题}：用 1 句重述任务和场景。
+    \item \textbf{Summarize the Approach and Results / 总结方法与结果}：用 2--3 句概括核心方法（Minimax + heuristic + difficulty scaling）以及最重要的实验结论。
+    \item \textbf{Highlight the Contribution / 强调贡献和意义}：说明本项目在教学、实践或后续研究上的价值，并可用一句话连接到 Future Work。
+\end{itemize}
+
+中文提示：不要在 Conclusion 引入新结果或新细节，只对已有内容做“高层复盘”。
+
+\section*{Acknowledgment}
+(可选) 致谢本课程老师、助教、队友等。  
+中文提示：简短即可，注意语气正式。
+
+\begin{thebibliography}{00}
+\bibitem{shannon1950}
+C. E. Shannon, “Programming a computer for playing chess,”
+Philosophical Magazine, vol. 41, no. 314, pp. 256–275, 1950.
+
+
+% 在这里添加你的其他参考文献，按 IEEE 格式。
+% 写作提示：正文中用 [1], [2] 等方式引用；参考文献条目要与正文引用一一对应。
+
+\end{thebibliography}
+
+\end{document}
