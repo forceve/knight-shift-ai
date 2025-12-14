@@ -2,18 +2,11 @@
 \documentclass[conference]{IEEEtran}
 
 % *** LANGUAGE / ENCODING PACKAGES ***
-\usepackage{xeCJK}        % For Chinese characters
 \usepackage[english]{babel}
 \usepackage{amsmath,amssymb}
 \usepackage{graphicx}
 \usepackage{cite}
 \usepackage{hyperref}
-
-\setCJKmainfont{SimSun}
-\setCJKmonofont{Courier New}
-\setCJKsansfont{SimHei}
-\setCJKfamilyfont{zhhei}{SimHei}
-\newcommand{\hei}{\CJKfamily{zhhei}}
 
 \begin{document}
 
@@ -208,44 +201,6 @@ Our work adopts a simpler but related perspective on difficulty scaling.
 Instead of targeting specific Elo ratings, we define four discrete difficulty levels by jointly controlling search depth, pruning aggressiveness, evaluation complexity, and randomness in move selection, as well as the use of CNN-guided Monte Carlo Tree Search at the highest level. 
 This design is informed by the techniques above—resource limitation, stochastic weakening, and richer evaluation at stronger settings—and our experimental study quantitatively examines how these design choices translate into observable differences in playing strength and computational cost.
 
-\begin{enumerate}
-    \item \textbf{Organize by Themes / 按主题分块，而不是按论文顺序}：
-
-    建议分成 2--3 个小节，例如：
-    \begin{itemize}
-        \item Game-tree search algorithms (Minimax, Negamax, Alpha--Beta, MCTS, etc.)
-        \item Heuristic evaluation in board-game AI
-        \item Difficulty scaling and opponent modeling in game AI
-    \end{itemize}
-
-    每个小节先用英文一两句说明主题，再总结相关工作。中文用于提示：解释本小节的逻辑和筛选标准。
-
-    \item \textbf{Three-Sentence Rule / 每篇文献“三句话原则”}：
-    对于重要文献，尽量用 3 句话概括：
-    \begin{itemize}
-        \item 做了什么（问题与方法）
-        \item 怎么做（关键技术点）
-        \item 好坏点和与你工作的关系（优点/局限/启发）
-    \end{itemize}
-
-    这三句可以完全用英文，括号内配一句简短中文解释写作意图。
-
-    \item \textbf{Critical Analysis / 批判性分析而不是“流水账”}：
-    合理比较不同方法的优缺点，指出例如：
-    \begin{itemize}
-        \item 传统手写 heuristic 的可解释性 vs 深度学习评估函数的性能优势；
-        \item 只调搜索深度的难度分级会导致棋力跨度不均匀；
-        \item 一些工作缺乏与人类体验相关的评估指标等。
-    \end{itemize}
-
-    \item \textbf{Identify Gaps / 引出研究空缺}：
-    用一段总结：
-    \begin{itemize}
-        \item 哪些问题已经被充分研究（你就少做）；
-        \item 哪些方面相对薄弱（你会重点补足），例如：在教学项目场景下对多等级棋力和资源受限 AI 的系统分析较少。
-    \end{itemize}
-    最后自然过渡到下一节 Methodology，说明你将如何在这些文献基础上设计自己的系统。
-\end{enumerate}
 
 \section{Methodology}
 

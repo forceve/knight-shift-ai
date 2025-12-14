@@ -2,18 +2,11 @@
 \documentclass[conference]{IEEEtran}
 
 % *** LANGUAGE / ENCODING PACKAGES ***
-\usepackage{xeCJK}        % For Chinese characters
 \usepackage[english]{babel}
 \usepackage{amsmath,amssymb}
 \usepackage{graphicx}
 \usepackage{cite}
 \usepackage{hyperref}
-
-\setCJKmainfont{SimSun}
-\setCJKmonofont{Courier New}
-\setCJKsansfont{SimHei}
-\setCJKfamilyfont{zhhei}{SimHei}
-\newcommand{\hei}{\CJKfamily{zhhei}}
 
 \begin{document}
 
@@ -208,44 +201,6 @@ Our work adopts a simpler but related perspective on difficulty scaling.
 Instead of targeting specific Elo ratings, we define four discrete difficulty levels by jointly controlling search depth, pruning aggressiveness, evaluation complexity, and randomness in move selection, as well as the use of CNN-guided Monte Carlo Tree Search at the highest level. 
 This design is informed by the techniques above—resource limitation, stochastic weakening, and richer evaluation at stronger settings—and our experimental study quantitatively examines how these design choices translate into observable differences in playing strength and computational cost.
 
-\begin{enumerate}
-    \item \textbf{Organize by Themes / 按主题分块，而不是按论文顺序}：
-
-    建议分成 2--3 个小节，例如：
-    \begin{itemize}
-        \item Game-tree search algorithms (Minimax, Negamax, Alpha--Beta, MCTS, etc.)
-        \item Heuristic evaluation in board-game AI
-        \item Difficulty scaling and opponent modeling in game AI
-    \end{itemize}
-
-    每个小节先用英文一两句说明主题，再总结相关工作。中文用于提示：解释本小节的逻辑和筛选标准。
-
-    \item \textbf{Three-Sentence Rule / 每篇文献“三句话原则”}：
-    对于重要文献，尽量用 3 句话概括：
-    \begin{itemize}
-        \item 做了什么（问题与方法）
-        \item 怎么做（关键技术点）
-        \item 好坏点和与你工作的关系（优点/局限/启发）
-    \end{itemize}
-
-    这三句可以完全用英文，括号内配一句简短中文解释写作意图。
-
-    \item \textbf{Critical Analysis / 批判性分析而不是“流水账”}：
-    合理比较不同方法的优缺点，指出例如：
-    \begin{itemize}
-        \item 传统手写 heuristic 的可解释性 vs 深度学习评估函数的性能优势；
-        \item 只调搜索深度的难度分级会导致棋力跨度不均匀；
-        \item 一些工作缺乏与人类体验相关的评估指标等。
-    \end{itemize}
-
-    \item \textbf{Identify Gaps / 引出研究空缺}：
-    用一段总结：
-    \begin{itemize}
-        \item 哪些问题已经被充分研究（你就少做）；
-        \item 哪些方面相对薄弱（你会重点补足），例如：在教学项目场景下对多等级棋力和资源受限 AI 的系统分析较少。
-    \end{itemize}
-    最后自然过渡到下一节 Methodology，说明你将如何在这些文献基础上设计自己的系统。
-\end{enumerate}
 
 \section{Methodology}
 
@@ -274,66 +229,41 @@ Difficulty scaling is achieved through four orthogonal mechanisms:
 and (4) move selection randomness (random tie-breaking among top moves at Level 1, deterministic best-move selection at higher levels). 
 This multi-dimensional approach ensures clear separation between difficulty levels while maintaining computational efficiency.
 
-本节是「方法论/算法设计」，偏抽象（conceptual + mathematical），而不讨论具体代码文件。
-
-可以分为如下子节（仅示例）：
-
-\subsection{Game Formalization}
-用英文形式化游戏模型，例如 state, action, transition, terminal condition 等。可以写成：
-
-\begin{itemize}
-    \item Define the board representation, players, legal moves, and winning conditions.
-    \item Optionally introduce a game tree notation, where nodes represent states and edges represent moves.
-\end{itemize}
-
-中文注释：说明这是在帮读者建立一个统一的符号与问题设定（问题建模）。
-
-\subsection{Search Algorithm}
-在此描述 Minimax/Negamax/Alpha--Beta 之类：
-
-\begin{itemize}
-    \item 用文字 + 必要的伪代码（pseudo-code）展示递归结构和剪枝逻辑。
-    \item 解释算法复杂度和对分支因子、深度的敏感性（大 O 分析可选）。
-    \item 中文可以解释写作层面：突出「为什么选择这个算法」以及「与课程内容的对应关系」。
-\end{itemize}
-
-\subsection{Heuristic Evaluation Function}
-介绍你的评估函数设计：
-
-\begin{itemize}
-    \item 用数学表达式给出评分公式，例如 $Eval(s) = w_1 f_1(s) + w_2 f_2(s) + \dots$。
-    \item 定义各个特征 $f_i(s)$ 的含义（比如连珠数、威胁模式、材料优势等）。
-    \item 讨论权重 $w_i$ 的设定方式（经验设定、简单调参、数据统计等）。
-    \item 中文写作提示：强调「为什么这些特征合理」「与文献中的特征设计有何联系」。
-\end{itemize}
-
-\subsection{Difficulty Design}
-说明多等级难度如何实现（difficulty scaling）：
-
-\begin{itemize}
-    \item For each level, specify search depth, evaluation complexity, randomness, and any additional constraints.
-    \item Explain the rationale behind the design, e.g., ``Level 1 trades playing strength for faster response time to suit beginners.''
-    \item 中文提示：这里要让设计看起来有理论依据，而不是“瞎调参数”，可以引用文献中的典型做法作为支撑。
-\end{itemize}
-
 \section{Implementation}
 This section describes how the methodology is turned into an actual software system.
 
-本节偏工程实现（“How we built it”），可以包含结构图、模块划分等。
+\subsection{System Architecture}
+The system follows a client-server architecture with clear separation between the game logic, AI engines, and user interface. The backend implements the core chess mechanics and AI algorithms using FastAPI, while the frontend provides an interactive web interface built with React. The architecture supports three game modes: human vs. human (H2H), human vs. machine (H2M), and machine vs. machine (M2M), with the latter enabling automated testing and benchmarking.
 
-建议内容：
+\subsection{Core Components}
+
+\subsubsection{Game State Management}
+The central component is the \texttt{GameManager} class, which maintains chess game state using the python-chess library. Each game session tracks the current board position (FEN), move history, player information, and game status. The manager handles move validation, game termination detection, and coordinates between human input and AI decision-making.
+
+\subsubsection{AI Engine System}
+The AI system implements five difficulty levels through a modular engine architecture. Each engine inherits from a common \texttt{BaseEngine} class that provides shared evaluation functions and utilities. The engines progressively increase in complexity:
 
 \begin{itemize}
-    \item \textbf{Architecture Overview / 系统架构总览}：用一张图或一小段，说明前端、后端、AI 引擎、数据模块之间的关系。中文提示：清楚展示数据流（棋局状态如何传递、AI 如何被调用）。
-    \item \textbf{Modules / 核心模块}：用小段分别介绍各个模块，例如 \texttt{Board}, \texttt{Search}, \texttt{Evaluation}, \texttt{UI} 等。说明每个模块的职责，而不是列代码。
-    \item \textbf{Technologies / 使用的技术栈}：列出编程语言、框架和主要第三方库，解释选择理由（简洁、课程要求、易于部署等）。
-    \item \textbf{Game Modes / 对战模式实现}：说明 H2M（human vs. machine）、M2M（machine vs. machine）是如何在架构中实现的，如何记录对局数据用于实验。
-    \item \textbf{Frontend/UI Design / 前端设计}：简述棋盘渲染、走子交互、计时/悔棋/提示按钮、走子记录（PGN/简单列表）、以及前端如何调用后端 API/引擎（同步/异步、长轮询或本地调用）。若采用桌面 UI（如 PyQt/Tkinter）或浏览器 UI（如 React/Vue），说明选择理由与部署方式。
+    \item \textbf{Level 1 (Greedy)}: Evaluates all legal moves one ply deep, selecting the best immediate position based on material and positional heuristics.
+    \item \textbf{Level 2-4}: Implement minimax search with alpha-beta pruning at increasing depths (2, 3, and 4 ply respectively), with iterative deepening and move ordering.
+    \item \textbf{Level 5}: Extends Level 4 with quiescence search to handle tactical sequences beyond the nominal depth limit.
+    \item \textbf{Ultimate}: Uses Monte Carlo Tree Search with time-based termination instead of fixed depth, providing more adaptive search behavior.
 \end{itemize}
 
-写作提示：前端部分保持高层描述，强调交互流与状态同步，而非低层代码实现；可用一张示意图表示前端与后端的事件流（用户输入 $\rightarrow$ 请求引擎 $\rightarrow$ 返回最佳着法/评估 $\rightarrow$ 更新棋盘与日志）。
+\subsubsection{Evaluation Framework}
+The evaluation system combines multiple chess-specific features into a unified scoring function. Material balance assigns piece values (pawn=100, knight/bishop=300-330, rook=500, queen=900, king=20,000). Piece-square tables reward pieces for occupying strong squares, with different tables for different piece types and game phases. Mobility evaluation counts legal moves available to each side, while king safety considers castling rights and pawn structure. The system also includes repetition detection to avoid threefold repetition draws.
 
-写作时注意：尽量用结构图和清晰的小节标题帮助读者快速理解整体系统，而不是陷入具体代码细节。
+\subsubsection{Machine vs. Machine Testing}
+The M2M controller enables systematic evaluation through automated matches. It supports both individual matches and batch testing with configurable parameters including engine pairings, game count, color swapping, and move limits. Results are stored with detailed move histories for later analysis and replay.
+
+\subsection{Technology Stack}
+The backend uses Python 3.11 with FastAPI for the REST API, python-chess for board representation and move generation, and uvicorn as the ASGI server. The frontend employs React 18 with TypeScript, Tailwind CSS for styling, and react-chessboard for the interactive chess board component. Vite serves as the build tool and development server.
+
+\subsection{Frontend Design}
+The web interface provides an intuitive chess experience with drag-and-drop move input, real-time board updates, and comprehensive game controls. The interface includes a move history panel, status indicators for check and game end conditions, and support for game resignation. The replay viewer allows stepping through completed games with adjustable playback speed, supporting both H2M and M2M matches.
+
+\subsection{Data Flow and API Design}
+The system uses RESTful endpoints for all game operations. Human moves are submitted via POST requests with source and destination squares, while AI moves are requested asynchronously. Game state is maintained server-side with FEN strings and move histories returned to the client. The API supports concurrent games through unique session identifiers and provides real-time status updates.
 
 \section{Experimental Results}
 This section presents the experiments and quantitative/qualitative results.

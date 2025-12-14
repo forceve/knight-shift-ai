@@ -134,16 +134,14 @@ The techniques reviewed above directly inform our choice of search algorithms an
 depth limits, rollout settings, and time-control strategies across the four levels in our multi-level chess AI. 
 
 \subsection{Evaluation Functions}
-Given a fixed search procedure, the strength of a chess engine depends on the quality of its evaluation function, which estimates the value of non-terminal positions. 
-Existing work on evaluation functions can be divided into two families: theory-driven heuristic evaluation based on human knowledge, and learned evaluation using statistical or neural models.
+Given a fixed search procedure, the strength of a chess engine depends critically on the quality of its evaluation function, which estimates the value of non-terminal positions. 
+Broadly speaking, existing work on evaluation functions for chess can be divided into two families: theory-driven heuristic evaluation based on human and engine knowledge, and learned evaluation using statistical or neural models.
 
 \subsubsection{Theory-Driven Heuristic Evaluation}
-Classical heuristic evaluation functions are typically hand-crafted, combining multiple features into a score value.
-Early systems already incorporated material balance---assigning values to each piece type---as the core component of evaluation, 
-reflecting the importance of material advantage in human chess strategy~\cite{shannon1950}. 
-Subsequent engines enriched this basic model with additional features based on position analysis such as piece-square tables, mobility, pawn structure, and king safety~\cite{campbell2002deepblue,heinz1999chess}. 
-Piece-square tables reward or penalize pieces for occupying strategically important squares; mobility terms measure the number of available moves or controlled squares; 
-pawn-structure terms capture concepts such as passed, doubled, and isolated pawns; and king-safety terms account for pawn shields, open files near the king, and nearby attacking pieces.
+Classical chess engines typically employ hand-designed heuristic evaluation functions that combine multiple positional features into a single scalar score. 
+Early systems already incorporated material balance---assigning fixed values to each piece type---as the core component of evaluation, reflecting the importance of material advantage in human chess strategy. 
+Subsequent engines enriched this basic model with additional features such as piece-square tables, mobility, pawn structure, and king safety~\cite{campbell2002deepblue,heinz1999chess}. 
+Piece-square tables reward or penalize pieces for occupying strategically important squares; mobility terms measure the number of available moves or controlled squares; pawn-structure terms capture concepts such as passed, doubled, and isolated pawns; and king-safety terms account for pawn shields, open files near the king, and nearby attacking pieces.
 
 These features are usually combined in a (piece-wise) linear form,
 \begin{equation}
@@ -207,6 +205,12 @@ These systems illustrate that adjustable playing strength is not only a usabilit
 Our work adopts a simpler but related perspective on difficulty scaling. 
 Instead of targeting specific Elo ratings, we define four discrete difficulty levels by jointly controlling search depth, pruning aggressiveness, evaluation complexity, and randomness in move selection, as well as the use of CNN-guided Monte Carlo Tree Search at the highest level. 
 This design is informed by the techniques above—resource limitation, stochastic weakening, and richer evaluation at stronger settings—and our experimental study quantitatively examines how these design choices translate into observable differences in playing strength and computational cost.
+
+This section reviews \emph{existing methods and studies} relevant to your project and positions your work among them.
+
+本节是文献综述（Related Work / Literature Review），目标是「别人怎么玩 + 有什么问题 + 你准备怎么玩得更好」。
+
+推荐写作步骤：
 
 \begin{enumerate}
     \item \textbf{Organize by Themes / 按主题分块，而不是按论文顺序}：
@@ -453,55 +457,7 @@ This section briefly summarizes what has been done and what has been learned.
     
     \bibitem{silver2016}
     D.~Silver \emph{et al.}, ``Mastering the game of Go with deep neural networks and tree search,'' \emph{Nature}, vol.~529, no.~7587, pp.~484--489, 2016.
-
-    \bibitem{berliner1981}
-    H.~J.~Berliner, ``On the construction of a world-championship-caliber chess program,'' in \emph{Computers, Chess, and Cognition}, T.~A.~Marsland and J.~Schaeffer, Eds. New York, NY, USA: Springer, 1990, pp.~19--36.
-
-    \bibitem{campbell2002deepblue}
-    M.~Campbell, A.~J.~Hoenigman, and F.~Hsu, ``Deep blue,'' \emph{Artificial Intelligence}, vol.~134, no.~1-2, pp.~57--83, 2002.
-
-    \bibitem{heinz1999chess}
-    E.~A.~Heinz, ``Scalable search in computer chess: Algorithmic enhancements and experiments at high search depths,'' \emph{Vieweg+Teubner}, 1999.
-
-    \bibitem{taperedeval}
-    D.~M.~Burch, ``Tapered evaluation,'' \emph{ICCA Journal}, vol.~30, no.~3, pp.~151--155, 2007.
-
-    \bibitem{tesauro1995tdgammon}
-    G.~Tesauro, ``Temporal difference learning and TD-Gammon,'' \emph{Communications of the ACM}, vol.~38, no.~3, pp.~58--68, 1995.
-
-    \bibitem{lai2015giraffe}
-    M.~Lai, ``Giraffe: Using deep reinforcement learning to play chess,'' arXiv preprint arXiv:1509.01549, 2015.
-
-    \bibitem{silver2018az}
-    D.~Silver \emph{et al.}, ``A general reinforcement learning algorithm that masters chess, shogi, and Go through self-play,'' \emph{Science}, vol.~362, no.~6419, pp.~1140--1144, 2018.
-
-    \bibitem{lczero}
-    The LCZero Authors, ``Leela chess zero,'' 2017. [Online]. Available: https://lczero.org/
-
-    \bibitem{uciSpec}
-    S.~Gligoric, ``Universal chess interface protocol,'' 2000. [Online]. Available: http://wbec-ridderkerk.nl/html/UCIProtocol.html
-
-    \bibitem{chessEngineWiki}
-    ``Chess engine,'' Wikipedia. [Online]. Available: \url{https://en.wikipedia.org/wiki/Chess_engine}
-
-    \bibitem{stockfishSkill}
-    ``Stockfish skill level,'' Stockfish documentation. [Online]. Available: \url{https://github.com/official-stockfish/Stockfish}
-
-    \bibitem{komodoSettings}
-    ``Komodo chess engine,'' Komodo Chess. [Online]. Available: \url{https://komodochess.com/}
-
-    \bibitem{playingStrength}
-    M.~Lai, ``Strength and skill: The scientific study of chess engine playing strength,'' in \emph{Advances in Computer Games}, 2015.
-
-    \bibitem{limitNodes}
-    J.~Forbes, ``Node limits in chess engines,'' \emph{ICGA Journal}, vol.~38, no.~1, pp.~33--45, 2015.
-
-    \bibitem{alphadda}
-    N.~Brown, T.~Anthony, and T.~Nudelman, ``AlphaDDA: A framework for adaptive difficulty adjustment in games,'' in \emph{Proceedings of the AAAI Conference on Artificial Intelligence and Interactive Digital Entertainment}, vol.~13, no.~1, 2017.
-
-    \bibitem{playMagnus}
-    ``Play Magnus,'' Chess.com. [Online]. Available: \url{https://www.chess.com/play-magnus}
-
+    
 \end{thebibliography}
 
 \end{document}

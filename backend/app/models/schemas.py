@@ -17,6 +17,7 @@ class AILevel(str, Enum):
     LEVEL2 = "level2"
     LEVEL3 = "level3"
     LEVEL4 = "level4"
+    LEVEL5 = "level5"
     ULTIMATE = "ultimate"
 
 

@@ -22,19 +22,31 @@
 \@writefile{toc}{\contentsline {section}{\numberline {II}Literature Review}{2}{section.2}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {II-A}}Classical View of Computer Chess as Tree Search}{2}{subsection.2.1}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {II-B}}Search Techniques}{2}{subsection.2.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {II-C}}Practical Engine Architectures}{3}{subsection.2.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {II-D}}Evaluation Functions}{3}{subsection.2.4}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {II-E}}Adjustable Playing Strength and Difficulty Scaling}{3}{subsection.2.5}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {III}Methodology}{3}{section.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-A}}Game Formalization}{3}{subsection.3.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-B}}Search Algorithm}{4}{subsection.3.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-C}}Heuristic Evaluation Function}{4}{subsection.3.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-D}}Difficulty Design}{4}{subsection.3.4}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {IV}Implementation}{4}{section.4}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {V}Experimental Results}{4}{section.5}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-A}}Experimental Setup}{4}{subsection.5.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-B}}Results and Observations}{4}{subsection.5.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {VI}Performance Analysis}{4}{section.6}\protected@file@percent }
+\citation{shannon1950}
+\citation{campbell2002deepblue,heinz1999chess}
+\citation{taperedeval}
+\citation{samuel1959}
+\citation{tesauro1995tdgammon}
+\citation{lai2015giraffe}
+\citation{silver2018az,lczero}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {II-C}}Evaluation Functions}{3}{subsection.2.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {II-C}1}Theory-Driven Heuristic Evaluation}{3}{subsubsection.2.3.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {II-C}2}Learned Evaluation and Neural Networks}{3}{subsubsection.2.3.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {II-D}}Practical Engine Architectures and Time Management}{3}{subsection.2.4}\protected@file@percent }
+\citation{uciSpec,chessEngineWiki}
+\citation{stockfishSkill,komodoSettings}
+\citation{playingStrength,limitNodes}
+\citation{stockfishSkill}
+\citation{chessEngineWiki}
+\citation{alphadda}
+\citation{playMagnus}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {II-E}}Adjustable Playing Strength and Difficulty Scaling}{4}{subsection.2.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {III}Methodology}{4}{section.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-A}}Game Formalization}{5}{subsection.3.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-B}}Search Algorithm}{5}{subsection.3.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-C}}Heuristic Evaluation Function}{5}{subsection.3.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-D}}Difficulty Design}{5}{subsection.3.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {IV}Implementation}{5}{section.4}\protected@file@percent }
 \bibcite{shannon1950}{1}
 \bibcite{samuel1959}{2}
 \bibcite{vonNeumann1928}{3}
@@ -49,7 +61,27 @@
 \bibcite{coulom2006}{12}
 \bibcite{kocsis2006}{13}
 \bibcite{silver2016}{14}
-\@writefile{toc}{\contentsline {section}{\numberline {VII}Future Work}{5}{section.7}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {VIII}Conclusion}{5}{section.8}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{References}{5}{section*.2}\protected@file@percent }
-\gdef \@abspage@last{5}
+\bibcite{berliner1981}{15}
+\@writefile{toc}{\contentsline {section}{\numberline {V}Experimental Results}{6}{section.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-A}}Experimental Setup}{6}{subsection.5.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-B}}Results and Observations}{6}{subsection.5.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {VI}Performance Analysis}{6}{section.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {VII}Future Work}{6}{section.7}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {VIII}Conclusion}{6}{section.8}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{References}{6}{section*.2}\protected@file@percent }
+\bibcite{campbell2002deepblue}{16}
+\bibcite{heinz1999chess}{17}
+\bibcite{taperedeval}{18}
+\bibcite{tesauro1995tdgammon}{19}
+\bibcite{lai2015giraffe}{20}
+\bibcite{silver2018az}{21}
+\bibcite{lczero}{22}
+\bibcite{uciSpec}{23}
+\bibcite{chessEngineWiki}{24}
+\bibcite{stockfishSkill}{25}
+\bibcite{komodoSettings}{26}
+\bibcite{playingStrength}{27}
+\bibcite{limitNodes}{28}
+\bibcite{alphadda}{29}
+\bibcite{playMagnus}{30}
+\gdef \@abspage@last{7}

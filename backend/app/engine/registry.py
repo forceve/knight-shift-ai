@@ -4,6 +4,7 @@ from app.engine.level1_engine import Level1Engine
 from app.engine.level2_engine import Level2Engine
 from app.engine.level3_engine import Level3Engine
 from app.engine.level4_engine import Level4Engine
+from app.engine.level5_engine import Level5Engine
 from app.engine.ultimate_engine import UltimateEngine
 from app.models.schemas import AILevel
 
@@ -13,6 +14,7 @@ ENGINE_REGISTRY = {
     AILevel.LEVEL2: Level2Engine(),
     AILevel.LEVEL3: Level3Engine(),
     AILevel.LEVEL4: Level4Engine(),
+    AILevel.LEVEL5: Level5Engine(),
     AILevel.ULTIMATE: UltimateEngine(),
 }
 

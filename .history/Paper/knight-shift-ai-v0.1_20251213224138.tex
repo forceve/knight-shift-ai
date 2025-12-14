@@ -1,3 +1,4 @@
+
 % !TeX encoding = UTF-8
 \documentclass[conference]{IEEEtran}
 
@@ -10,10 +11,10 @@
 \usepackage{hyperref}
 
 \setCJKmainfont{SimSun}
-\setCJKmonofont{Courier New}
-\setCJKsansfont{SimHei}
-\setCJKfamilyfont{zhhei}{SimHei}
-\newcommand{\hei}{\CJKfamily{zhhei}}
+
+% Optional: line spacing inside drafts (comment out in final)
+% \usepackage{setspace}
+% \doublespacing
 
 \begin{document}
 
@@ -133,39 +134,6 @@ allowing more selective exploration in complex positions under a fixed computati
 The techniques reviewed above directly inform our choice of search algorithms and our design of 
 depth limits, rollout settings, and time-control strategies across the four levels in our multi-level chess AI. 
 
-\subsection{Evaluation Functions}
-Given a fixed search procedure, the strength of a chess engine depends on the quality of its evaluation function, which estimates the value of non-terminal positions. 
-Existing work on evaluation functions can be divided into two families: theory-driven heuristic evaluation based on human knowledge, and learned evaluation using statistical or neural models.
-
-\subsubsection{Theory-Driven Heuristic Evaluation}
-Classical heuristic evaluation functions are typically hand-crafted, combining multiple features into a score value.
-Early systems already incorporated material balance---assigning values to each piece type---as the core component of evaluation, 
-reflecting the importance of material advantage in human chess strategy~\cite{shannon1950}. 
-Subsequent engines enriched this basic model with additional features based on position analysis such as piece-square tables, mobility, pawn structure, and king safety~\cite{campbell2002deepblue,heinz1999chess}. 
-Piece-square tables reward or penalize pieces for occupying strategically important squares; mobility terms measure the number of available moves or controlled squares; 
-pawn-structure terms capture concepts such as passed, doubled, and isolated pawns; and king-safety terms account for pawn shields, open files near the king, and nearby attacking pieces.
-
-These features are usually combined in a (piece-wise) linear form,
-\begin{equation}
-    \text{eval}(s) = \sum_i w_i f_i(s),
-\end{equation}
-where $f_i(s)$ are feature functions of the position $s$ and $w_i$ are tunable weights. 
-Many engines also interpolate between separate ``opening'' and ``endgame'' evaluations using tapered evaluation schemes, reflecting the changing importance of features across game phases~\cite{taperedeval}. 
-This theory-driven approach benefits from interpretability and tight connections to established chess principles, and it remains the dominant design in many strong alpha--beta-based engines. 
-Our system adopts a similar feature set for its heuristic component, including material, piece-square tables, mobility, pawn structure, and king-safety terms.
-
-\subsubsection{Learned Evaluation and Neural Networks}
-In parallel with hand-crafted heuristics, there is a long tradition of learning evaluation functions from data. 
-Samuel's pioneering work on checkers~\cite{samuel1959} and Tesauro's TD-Gammon~\cite{tesauro1995tdgammon} demonstrated that neural networks trained by self-play can discover strong evaluation functions that rival or surpass human-designed heuristics. 
-More recent systems for chess and other board games, such as Giraffe~\cite{lai2015giraffe} and the AlphaZero/Leela family of engines~\cite{silver2018az,lczero}, employ deep neural networks to approximate position values and policies, trained on large datasets of expert games or self-play.
-
-A common pattern in these systems is to encode the board state as a stack of two-dimensional feature planes and to feed this representation into a convolutional neural network (CNN) that outputs either a scalar value estimate or both value and move probabilities. 
-The CNN thereby acts as a powerful, learned evaluation function that can capture high-order interactions and local patterns that are difficult to express using simple linear heuristics, at the cost of higher computational expense per evaluation.
-
-Our work follows this line by incorporating a CNN-based evaluator trained on self-play games as the learned component of our hybrid evaluation framework. 
-In the highest difficulty level of our system, this CNN provides position scores or policy hints that guide Monte Carlo Tree Search under a fixed computation budget, while lower levels rely more heavily on theory-driven heuristic evaluation. 
-This hybrid design allows us to explore the trade-off between heuristic and learned evaluation in a resource-constrained, multi-level chess AI setting.
-
 \subsection{Practical Engine Architectures and Time Management}
 While the previous subsection focuses on individual search techniques, practical chess engines must integrate these components into a coherent architecture that can operate under real-time constraints. 
 A typical engine is organized into several modules, including position representation and move generation, a search driver with time-management logic, an evaluation module, 
@@ -188,25 +156,15 @@ We use a modular design with separate components for move generation, tree searc
 Although we do not implement all advanced features such as full-fledged opening books or endgame tablebases, the architectural ideas from practical engines---modularity, caching, 
 and time-aware iterative deepening---directly inform our design for operating under limited hardware and for exposing controllable difficulty levels.
 
+\subsection{Evaluation Functions}
+
 \subsection{Adjustable Playing Strength and Difficulty Scaling}
-As chess engines have surpassed human players, many systems have introduced mechanisms to adjust or limit engine strength so that engines remain useful as training partners. 
-The Universal Chess Interface (UCI) protocol, for example, includes parameters such as \texttt{uci\_limitstrength} and \texttt{uci\_elo} that allow engines to expose a range of nominal Elo levels for human users~\cite{uciSpec,chessEngineWiki}. 
-Commercial and hobbyist engines often implement similar controls through discrete skill levels, as in Stockfish and Komodo, which internally modify search behavior and evaluation to produce weaker play at lower settings~\cite{stockfishSkill,komodoSettings}.
 
-Concretely, several techniques have been used in the literature and in practice to scale playing strength. 
-A straightforward approach is to restrict search resources by limiting search depth, thinking time, or the number of nodes visited per move~\cite{playingStrength,limitNodes}. 
-Stronger engines typically allocate more time or nodes, allowing deeper and more accurate searches, while weaker levels are constrained to shallower search. 
-Other approaches inject stochasticity or deliberate errors, for example by adding noise to evaluation scores or occasionally selecting suboptimal moves during search, as documented for the Stockfish skill-level mechanism~\cite{stockfishSkill}. 
-Some graphical user interfaces expose these mechanisms directly, allowing users to choose either a target Elo or a qualitative level such as ``beginner'', ``club'', or ``master''~\cite{chessEngineWiki}.
+This section reviews \emph{existing methods and studies} relevant to your project and positions your work among them.
 
-Beyond static level settings, there is also work on dynamic difficulty adjustment (DDA) in game-playing AI. 
-For example, the AlphaDDA system extends an AlphaZero-style architecture with a mechanism that adapts its playing strength during a game by tuning parameters that control search and evaluation according to the current game state~\cite{alphadda}. 
-Commercial applications such as the Play Magnus app similarly offer a range of playing styles and strengths aimed at providing a more engaging training experience for players of different levels~\cite{playMagnus}. 
-These systems illustrate that adjustable playing strength is not only a usability feature, but also a research topic in its own right, involving the design of control parameters and the calibration of perceived difficulty.
+本节是文献综述（Related Work / Literature Review），目标是「别人怎么玩 + 有什么问题 + 你准备怎么玩得更好」。
 
-Our work adopts a simpler but related perspective on difficulty scaling. 
-Instead of targeting specific Elo ratings, we define four discrete difficulty levels by jointly controlling search depth, pruning aggressiveness, evaluation complexity, and randomness in move selection, as well as the use of CNN-guided Monte Carlo Tree Search at the highest level. 
-This design is informed by the techniques above—resource limitation, stochastic weakening, and richer evaluation at stronger settings—and our experimental study quantitatively examines how these design choices translate into observable differences in playing strength and computational cost.
+推荐写作步骤：
 
 \begin{enumerate}
     \item \textbf{Organize by Themes / 按主题分块，而不是按论文顺序}：
@@ -249,7 +207,7 @@ This design is informed by the techniques above—resource limitation, stochasti
 
 \section{Methodology}
 
-This section explains the \emph{theoretical design and algorithms} used in the work, without going into low-level implementation details.
+This section explains the \emph{theoretical design and algorithms} used in your work, without going into low-level implementation details.
 
 Our multi-level chess AI system is built on a classical game-tree search framework, 
 where each difficulty level is realized through systematic variations in search depth, pruning strategies, evaluation complexity, and move selection rationale. 
@@ -453,55 +411,7 @@ This section briefly summarizes what has been done and what has been learned.
     
     \bibitem{silver2016}
     D.~Silver \emph{et al.}, ``Mastering the game of Go with deep neural networks and tree search,'' \emph{Nature}, vol.~529, no.~7587, pp.~484--489, 2016.
-
-    \bibitem{berliner1981}
-    H.~J.~Berliner, ``On the construction of a world-championship-caliber chess program,'' in \emph{Computers, Chess, and Cognition}, T.~A.~Marsland and J.~Schaeffer, Eds. New York, NY, USA: Springer, 1990, pp.~19--36.
-
-    \bibitem{campbell2002deepblue}
-    M.~Campbell, A.~J.~Hoenigman, and F.~Hsu, ``Deep blue,'' \emph{Artificial Intelligence}, vol.~134, no.~1-2, pp.~57--83, 2002.
-
-    \bibitem{heinz1999chess}
-    E.~A.~Heinz, ``Scalable search in computer chess: Algorithmic enhancements and experiments at high search depths,'' \emph{Vieweg+Teubner}, 1999.
-
-    \bibitem{taperedeval}
-    D.~M.~Burch, ``Tapered evaluation,'' \emph{ICCA Journal}, vol.~30, no.~3, pp.~151--155, 2007.
-
-    \bibitem{tesauro1995tdgammon}
-    G.~Tesauro, ``Temporal difference learning and TD-Gammon,'' \emph{Communications of the ACM}, vol.~38, no.~3, pp.~58--68, 1995.
-
-    \bibitem{lai2015giraffe}
-    M.~Lai, ``Giraffe: Using deep reinforcement learning to play chess,'' arXiv preprint arXiv:1509.01549, 2015.
-
-    \bibitem{silver2018az}
-    D.~Silver \emph{et al.}, ``A general reinforcement learning algorithm that masters chess, shogi, and Go through self-play,'' \emph{Science}, vol.~362, no.~6419, pp.~1140--1144, 2018.
-
-    \bibitem{lczero}
-    The LCZero Authors, ``Leela chess zero,'' 2017. [Online]. Available: https://lczero.org/
-
-    \bibitem{uciSpec}
-    S.~Gligoric, ``Universal chess interface protocol,'' 2000. [Online]. Available: http://wbec-ridderkerk.nl/html/UCIProtocol.html
-
-    \bibitem{chessEngineWiki}
-    ``Chess engine,'' Wikipedia. [Online]. Available: \url{https://en.wikipedia.org/wiki/Chess_engine}
-
-    \bibitem{stockfishSkill}
-    ``Stockfish skill level,'' Stockfish documentation. [Online]. Available: \url{https://github.com/official-stockfish/Stockfish}
-
-    \bibitem{komodoSettings}
-    ``Komodo chess engine,'' Komodo Chess. [Online]. Available: \url{https://komodochess.com/}
-
-    \bibitem{playingStrength}
-    M.~Lai, ``Strength and skill: The scientific study of chess engine playing strength,'' in \emph{Advances in Computer Games}, 2015.
-
-    \bibitem{limitNodes}
-    J.~Forbes, ``Node limits in chess engines,'' \emph{ICGA Journal}, vol.~38, no.~1, pp.~33--45, 2015.
-
-    \bibitem{alphadda}
-    N.~Brown, T.~Anthony, and T.~Nudelman, ``AlphaDDA: A framework for adaptive difficulty adjustment in games,'' in \emph{Proceedings of the AAAI Conference on Artificial Intelligence and Interactive Digital Entertainment}, vol.~13, no.~1, 2017.
-
-    \bibitem{playMagnus}
-    ``Play Magnus,'' Chess.com. [Online]. Available: \url{https://www.chess.com/play-magnus}
-
+    
 \end{thebibliography}
 
 \end{document}
