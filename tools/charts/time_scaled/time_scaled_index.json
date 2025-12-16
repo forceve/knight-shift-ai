@@ -1,0 +1,93 @@
+[
+  {
+    "test_id": "07ba7f6c-896a-44bb-8710-f77fae4a4417",
+    "white_engine": "L3",
+    "black_engine": "L1",
+    "output_path": "tools\\charts\\time_scaled\\time_scaled_07ba7f6c-896a-44bb-8710-f77fae4a4417.png",
+    "updated_json": false
+  },
+  {
+    "test_id": "0db992b7-d377-4fab-ab8e-52fe8f197b73",
+    "white_engine": "L2",
+    "black_engine": "L1",
+    "output_path": "tools\\charts\\time_scaled\\time_scaled_0db992b7-d377-4fab-ab8e-52fe8f197b73.png",
+    "updated_json": false
+  },
+  {
+    "test_id": "3c9673f0-9352-4a75-9317-870790ee1dcd",
+    "white_engine": "L3",
+    "black_engine": "L2",
+    "output_path": "tools\\charts\\time_scaled\\time_scaled_3c9673f0-9352-4a75-9317-870790ee1dcd.png",
+    "updated_json": false
+  },
+  {
+    "test_id": "5c8f6f07-0d65-4e1f-92c3-9c10b91d7a47",
+    "white_engine": "L3",
+    "black_engine": "L2",
+    "output_path": "tools\\charts\\time_scaled\\time_scaled_5c8f6f07-0d65-4e1f-92c3-9c10b91d7a47.png",
+    "updated_json": false
+  },
+  {
+    "test_id": "79f1cab2-7bbc-4a10-af67-f533c13bc28a",
+    "white_engine": "L3",
+    "black_engine": "L2",
+    "output_path": "tools\\charts\\time_scaled\\time_scaled_79f1cab2-7bbc-4a10-af67-f533c13bc28a.png",
+    "updated_json": false
+  },
+  {
+    "test_id": "8bdb3330-a122-4986-900e-05e1e4953806",
+    "white_engine": "MCTS",
+    "black_engine": "L1",
+    "output_path": "tools\\charts\\time_scaled\\time_scaled_8bdb3330-a122-4986-900e-05e1e4953806.png",
+    "updated_json": false
+  },
+  {
+    "test_id": "8d136549-9d04-4360-a67a-4aa4e00ac2b3",
+    "white_engine": "L3",
+    "black_engine": "L2",
+    "output_path": "tools\\charts\\time_scaled\\time_scaled_8d136549-9d04-4360-a67a-4aa4e00ac2b3.png",
+    "updated_json": false
+  },
+  {
+    "test_id": "9cab082e-efb0-42d5-be8d-0de6f1f461a7",
+    "white_engine": "Ultimate",
+    "black_engine": "L3",
+    "output_path": "tools\\charts\\time_scaled\\time_scaled_9cab082e-efb0-42d5-be8d-0de6f1f461a7.png",
+    "updated_json": false
+  },
+  {
+    "test_id": "be50abc0-cbc6-4045-a4aa-e23be25e7ca0",
+    "white_engine": "L3",
+    "black_engine": "L1",
+    "output_path": "tools\\charts\\time_scaled\\time_scaled_be50abc0-cbc6-4045-a4aa-e23be25e7ca0.png",
+    "updated_json": false
+  },
+  {
+    "test_id": "c05f7714-8afe-4554-833f-d7ac1077a06d",
+    "white_engine": "Ultimate",
+    "black_engine": "L3",
+    "output_path": "tools\\charts\\time_scaled\\time_scaled_c05f7714-8afe-4554-833f-d7ac1077a06d.png",
+    "updated_json": false
+  },
+  {
+    "test_id": "c0c1ba1b-20cb-43f4-87af-09f55e7aa744",
+    "white_engine": "Ultimate",
+    "black_engine": "L3",
+    "output_path": "tools\\charts\\time_scaled\\time_scaled_c0c1ba1b-20cb-43f4-87af-09f55e7aa744.png",
+    "updated_json": false
+  },
+  {
+    "test_id": "ca33df75-6069-4f29-8446-4221d513c7af",
+    "white_engine": "L3",
+    "black_engine": "L2",
+    "output_path": "tools\\charts\\time_scaled\\time_scaled_ca33df75-6069-4f29-8446-4221d513c7af.png",
+    "updated_json": false
+  },
+  {
+    "test_id": "f67941c9-90fa-489c-8f42-0a2c7d8307aa",
+    "white_engine": "Ultimate",
+    "black_engine": "L3",
+    "output_path": "tools\\charts\\time_scaled\\time_scaled_f67941c9-90fa-489c-8f42-0a2c7d8307aa.png",
+    "updated_json": false
+  }
+]

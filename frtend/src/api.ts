@@ -1,4 +1,4 @@
-import { AILevel, BatchTestSummary, GameMode, GameState, MatchDetail, MatchSummary, MoveResponse, PlayerColor } from "./types";
+import { AILevel, BatchTestSummary, GameMode, GameState, MatchDetail, MatchSummary, MoveResponse, PlayerColor, PagedMatches, PagedTests } from "./types";
 
 // Auto-detect API base URL based on current hostname
 function getApiBase(): string {
@@ -55,19 +55,20 @@ export function humanMove(gameId: string, payload: { from_square: string; to_squ
   return api<MoveResponse>(`/games/${gameId}/move`, { method: "POST", body: JSON.stringify(payload) });
 }
 
-export function aiMove(gameId: string) {
-  return api<MoveResponse>(`/games/${gameId}/ai-move`, { method: "POST" });
+export function aiMove(gameId: string, timeLimit?: number) {
+  const suffix = timeLimit ? `?time_limit=${timeLimit}` : "";
+  return api<MoveResponse>(`/games/${gameId}/ai-move${suffix}`, { method: "POST" });
 }
 
 export function resignGame(gameId: string, payload: { player: PlayerColor }) {
   return api<GameState>(`/games/${gameId}/resign`, { method: "POST", body: JSON.stringify(payload) });
 }
 
-export function listMatches() {
-  return api<MatchSummary[]>("/m2m/matches");
+export function listMatches(page = 1, pageSize = 100) {
+  return api<PagedMatches>(`/m2m/matches?page=${page}&page_size=${pageSize}`);
 }
 
-export function runMatch(payload: { white_engine: AILevel; black_engine: AILevel; max_moves?: number; start_fen?: string | null }) {
+export function runMatch(payload: { white_engine: AILevel; black_engine: AILevel; max_moves?: number; start_fen?: string | null; time_limit_white?: number | null; time_limit_black?: number | null }) {
   return api<MatchDetail>("/m2m/match", { method: "POST", body: JSON.stringify(payload) });
 }
 
@@ -75,12 +76,12 @@ export function getMatch(matchId: string) {
   return api<MatchDetail>(`/m2m/matches/${matchId}`);
 }
 
-export function runBatch(payload: { white_engine: AILevel; black_engine: AILevel; games: number; swap_colors: boolean; max_moves?: number }) {
+export function runBatch(payload: { white_engine: AILevel; black_engine: AILevel; games: number; swap_colors: boolean; max_moves?: number; start_fen?: string | null; time_limit_white?: number | null; time_limit_black?: number | null }) {
   return api<BatchTestSummary>("/m2m/batch", { method: "POST", body: JSON.stringify(payload) });
 }
 
-export function listTests() {
-  return api<BatchTestSummary[]>("/m2m/tests");
+export function listTests(page = 1, pageSize = 100) {
+  return api<PagedTests>(`/m2m/tests?page=${page}&page_size=${pageSize}`);
 }
 
 export function getTest(testId: string) {
@@ -89,6 +90,10 @@ export function getTest(testId: string) {
 
 export function getAiLevels() {
   return api<{ levels: AILevel[] }>("/ai-levels");
+}
+
+export function runTimeBenchmark(payload: { white_engine: AILevel; black_engine: AILevel; time_limits: number[]; games_per_limit: number; swap_colors: boolean; max_moves?: number; start_fen?: string | null }) {
+  return api<BatchTestSummary>("/m2m/time-benchmark", { method: "POST", body: JSON.stringify(payload) });
 }
 
 export { API_BASE };

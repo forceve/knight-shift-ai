@@ -17,6 +17,11 @@ export function StatusBar({ state, isThinking, error }: { state: GameState | nul
             : `Turn: ${state.turn}`
           : "Create a game to start."}
       </div>
+      {state?.avg_rollouts_per_move !== null && state?.avg_rollouts_per_move !== undefined && (
+        <div className="text-xs text-slate-400">
+          Avg rollouts/move: {state.avg_rollouts_per_move.toFixed(0)}
+        </div>
+      )}
       {error && <div className="text-xs text-red-300">Error: {error}</div>}
     </div>
   );

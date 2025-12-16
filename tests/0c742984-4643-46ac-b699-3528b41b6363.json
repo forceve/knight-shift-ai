@@ -1,0 +1,35 @@
+{
+  "test_id": "0c742984-4643-46ac-b699-3528b41b6363",
+  "kind": "time_scaled",
+  "white_engine": "AILevel.LEVEL2",
+  "black_engine": "AILevel.LEVEL1",
+  "games": 90,
+  "swap_colors": false,
+  "max_moves": 400,
+  "status": "running",
+  "matches": [],
+  "results": {
+    "white": 0,
+    "black": 0,
+    "draw": 0
+  },
+  "completed": 0,
+  "created_at": "2025-12-14T16:41:50.700592",
+  "time_limit_white": null,
+  "time_limit_black": null,
+  "time_limits": [
+    0.1,
+    0.3,
+    0.5,
+    0.8,
+    1.0,
+    1.2,
+    1.5,
+    1.7,
+    2.0
+  ],
+  "games_per_limit": 10,
+  "rows": null,
+  "image_base64": null,
+  "start_fen": null
+}

@@ -1,0 +1,79 @@
+{
+  "test_id": "0ddd2eac-b116-4234-ba50-7fb072aa9069",
+  "kind": "time_scaled",
+  "white_engine": "AILevel.LEVEL3",
+  "black_engine": "AILevel.LEVEL1",
+  "games": 260,
+  "swap_colors": true,
+  "max_moves": 400,
+  "status": "running",
+  "matches": [],
+  "results": {
+    "white": 0,
+    "black": 0,
+    "draw": 0
+  },
+  "completed": 0,
+  "created_at": "2025-12-15T13:34:35.706262",
+  "time_limit_white": null,
+  "time_limit_black": null,
+  "time_limits": [
+    0.1,
+    0.3,
+    0.5,
+    0.7,
+    0.9,
+    1.1,
+    1.3,
+    1.5,
+    1.7,
+    1.9,
+    2.1,
+    2.3,
+    2.5
+  ],
+  "games_per_limit": 20,
+  "rows": [
+    {
+      "time_limit": 0.1,
+      "results": {
+        "white": 0,
+        "black": 0,
+        "draw": 0
+      },
+      "games": 20,
+      "avg_moves": 0.0,
+      "white_win_rate": 0.0,
+      "black_win_rate": 0.0,
+      "draw_rate": 0.0
+    },
+    {
+      "time_limit": 0.3,
+      "results": {
+        "white": 0,
+        "black": 0,
+        "draw": 0
+      },
+      "games": 20,
+      "avg_moves": 0.0,
+      "white_win_rate": 0.0,
+      "black_win_rate": 0.0,
+      "draw_rate": 0.0
+    },
+    {
+      "time_limit": 0.5,
+      "results": {
+        "white": 0,
+        "black": 0,
+        "draw": 0
+      },
+      "games": 20,
+      "avg_moves": 0.0,
+      "white_win_rate": 0.0,
+      "black_win_rate": 0.0,
+      "draw_rate": 0.0
+    }
+  ],
+  "image_base64": null,
+  "start_fen": null
+}

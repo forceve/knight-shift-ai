@@ -1,6 +1,6 @@
 # Knight Shift AI
 
-Web-based chess lab with FastAPI backend, python-chess engines (4 difficulty levels), and a React + TypeScript + Tailwind frontend.
+Web-based chess lab with FastAPI backend, python-chess engines (now including MCTS + CNN value net), and a React + TypeScript + Tailwind frontend.
 
 ## Project layout
 - `backend/` – FastAPI app, AI engines, M2M runner.
@@ -21,13 +21,14 @@ uvicorn app.main:app --reload --port 6789
 
 ### Key endpoints
 - `GET /health` – service status.
-- `POST /games` – create a game (`mode`: h2h|h2m|m2m, `ai_level`: level1|level2|level3|ultimate, `player_color`: white|black).
+- `POST /games` – create a game (`mode`: h2h|h2m|m2m, `ai_level`: level1..level5|ultimate|mcts|mcts_cnn, `player_color`: white|black).
 - `GET /games/{id}` – fetch game state (FEN, move history, status).
 - `POST /games/{id}/move` – submit human move (`from_square`, `to_square`, `promotion` optional).
-- `POST /games/{id}/ai-move` – ask AI to move (used for H2M or M2M).
+- `POST /games/{id}/ai-move` – ask AI to move (used for H2M or M2M); accepts optional `time_limit` (seconds) to enforce per-move budget.
 - `POST /games/{id}/resign` – resign game.
-- `POST /m2m/match` – run AI vs AI match once (returns detail + moves).
-- `POST /m2m/batch` – run batch of AI matches (aggregated results).
+- `POST /m2m/match` – run AI vs AI match once (returns detail + moves). Supports per-side time limits via `time_limit_white` / `time_limit_black`.
+- `POST /m2m/batch` – run batch of AI matches (aggregated results) with optional per-side time limits.
+- `POST /m2m/time-benchmark` – run a sweep of per-move time limits for two engines and returns aggregated stats + a PNG (base64) chart.
 - `GET /m2m/matches` / `GET /m2m/tests` – listings.
 
 ## Frontend
@@ -41,6 +42,19 @@ npm run dev
 ```
 
 Set `VITE_API_BASE` in `.env` if the backend is not on `http://localhost:6789`.
+
+### Time-scaled benchmarking UI
+- `/play` includes a per-move AI time control for H2M.
+- `/m2m` includes per-move limits for matches/batches and a “Time-scaled Benchmark” tool that runs background sweeps and renders a 2D chart comparing two engines across time budgets.
+- All batch/benchmark runs are persisted under `tests/` so progress survives page refresh and can be re-read from the Test Packages list.
+
+### Self-play training (CNN value net)
+Generate data and fine-tune the tiny CNN value head used by the `mcts_cnn` engine:
+```bash
+cd backend
+python -m app.training.selfplay --games 20 --max-moves 140 --time-limit 0.8 --epochs 8
+# Model saved to backend/app/engine/checkpoints/mcts_value.pt by default
+```
 
 ## Using the app
 - Pages:

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from enum import Enum
-from typing import List, Optional
+from typing import Dict, List, Optional
 
 from pydantic import BaseModel, Field
 
@@ -19,6 +19,8 @@ class AILevel(str, Enum):
     LEVEL4 = "level4"
     LEVEL5 = "level5"
     ULTIMATE = "ultimate"
+    MCTS = "mcts"
+    MCTS_CNN = "mcts_cnn"
 
 
 class PlayerColor(str, Enum):
@@ -66,6 +68,7 @@ class GameState(BaseModel):
     last_move: Optional[str] = None
     move_history: List[str] = Field(default_factory=list)
     in_check: bool = False
+    avg_rollouts_per_move: Optional[float] = None  # Average rollouts per move (for MCTS engines debugging)
 
 
 class MoveResponse(BaseModel):
@@ -78,6 +81,8 @@ class M2MMatchRequest(BaseModel):
     black_engine: AILevel
     max_moves: int = Field(200, ge=10, le=500)
     start_fen: Optional[str] = None
+    time_limit_white: Optional[float] = Field(default=None, ge=0.05, le=30, description="Per-move time budget for white engine (seconds)")
+    time_limit_black: Optional[float] = Field(default=None, ge=0.05, le=30, description="Per-move time budget for black engine (seconds)")
 
 
 class M2MBatchRequest(BaseModel):
@@ -86,6 +91,9 @@ class M2MBatchRequest(BaseModel):
     games: int = Field(4, ge=1, le=50)
     swap_colors: bool = True
     max_moves: int = Field(200, ge=10, le=500)
+    start_fen: Optional[str] = None
+    time_limit_white: Optional[float] = Field(default=None, ge=0.05, le=30)
+    time_limit_black: Optional[float] = Field(default=None, ge=0.05, le=30)
 
 
 class MatchSummary(BaseModel):
@@ -97,6 +105,8 @@ class MatchSummary(BaseModel):
     black_engine: AILevel
     moves: int
     created_at: str
+    time_limit_white: Optional[float] = None
+    time_limit_black: Optional[float] = None
 
 
 class MatchDetail(MatchSummary):
@@ -123,15 +133,57 @@ class HistoryEntry(BaseModel):
     created_at: str
 
 
+class BenchmarkRow(BaseModel):
+    time_limit: float
+    results: Dict[str, int]
+    games: int
+    avg_moves: float
+    white_win_rate: float
+    black_win_rate: float
+    draw_rate: float
+
+
 class BatchTestSummary(BaseModel):
     test_id: str
+    kind: str
     status: str
     white_engine: AILevel
     black_engine: AILevel
     games: int
+    total_games: int
     completed: int
-    results: dict
+    results: Dict[str, int]
     matches: List[str]
     swap_colors: bool
     max_moves: int
+    time_limit_white: Optional[float] = None
+    time_limit_black: Optional[float] = None
     created_at: str
+    time_limits: Optional[List[float]] = None
+    games_per_limit: Optional[int] = None
+    rows: Optional[List[BenchmarkRow]] = None
+    image_base64: Optional[str] = None
+
+
+class TimeBenchmarkRequest(BaseModel):
+    white_engine: AILevel
+    black_engine: AILevel
+    time_limits: List[float]
+    games_per_limit: int = Field(2, ge=1, le=20)
+    swap_colors: bool = True
+    max_moves: int = Field(200, ge=10, le=500)
+    start_fen: Optional[str] = None
+
+
+class PagedMatches(BaseModel):
+    items: List[MatchSummary]
+    page: int
+    page_size: int
+    total: int
+
+
+class PagedTests(BaseModel):
+    items: List[BatchTestSummary]
+    page: int
+    page_size: int
+    total: int

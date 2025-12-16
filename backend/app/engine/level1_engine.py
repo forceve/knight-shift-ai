@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import chess
 
-from app.engine.base_engine import BaseEngine, SearchResult
+from app.engine.base_engine import BaseEngine, SearchResult, evaluate_terminal_position
 
 
 class Level1Engine(BaseEngine):
@@ -23,7 +23,12 @@ class Level1Engine(BaseEngine):
 
         for move in board.legal_moves:
             board.push(move)
-            score = self.evaluate(board)
+            # Handle terminal positions in search layer
+            terminal_eval = evaluate_terminal_position(board)
+            if terminal_eval is not None:
+                score = terminal_eval
+            else:
+                score = self.evaluate(board)
             board.pop()
             total_nodes += 1
 

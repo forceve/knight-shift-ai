@@ -15,6 +15,8 @@ const levelLabels: Partial<Record<string, string>> = {
   level3: "Level 3 (Hard)",
   level4: "Level 4 (Human-like)",
   ultimate: "Ultimate",
+  mcts: "MCTS",
+  mcts_cnn: "MCTS + CNN",
 };
 
 function getLevelLabel(level: string): string {
@@ -37,6 +39,8 @@ export function Controls({
   onResign,
   onAiMove,
   disableAiMove,
+  aiTimeLimit,
+  setAiTimeLimit,
 }: {
   mode: GameMode;
   setMode: (m: GameMode) => void;
@@ -48,6 +52,8 @@ export function Controls({
   onResign: () => void;
   onAiMove: () => void;
   disableAiMove: boolean;
+  aiTimeLimit: number;
+  setAiTimeLimit: (t: number) => void;
 }) {
   const [availableLevels, setAvailableLevels] = useState<AILevel[]>([]);
 
@@ -57,7 +63,7 @@ export function Controls({
       .catch((err) => {
         console.error("Failed to fetch AI levels:", err);
         // Fallback to default levels if API fails
-        setAvailableLevels(["level1", "level2", "level3", "ultimate"]);
+        setAvailableLevels(["level1", "level2", "level3", "level4", "ultimate", "mcts", "mcts_cnn"]);
       });
   }, []);
 
@@ -90,6 +96,21 @@ export function Controls({
             </option>
           ))}
         </select>
+      </div>
+      <div className="flex items-center gap-2 text-sm text-slate-200">
+        <label className="flex items-center gap-2 bg-white/5 px-3 py-2 rounded-lg">
+          <span>AI time (s)</span>
+          <input
+            type="number"
+            min={0.1}
+            max={30}
+            step={0.1}
+            value={aiTimeLimit}
+            onChange={(e) => setAiTimeLimit(Math.max(0.1, Math.min(30, Number(e.target.value))))}
+            className="bg-transparent border border-white/10 rounded px-2 py-1 w-24 text-sm"
+          />
+        </label>
+        <span className="text-xs text-slate-500">Per-move limit for AI engines.</span>
       </div>
       <div className="flex gap-2">
         <button className="flex-1 bg-accent hover:brightness-110 text-midnight font-semibold rounded-lg py-2 transition" onClick={onNewGame}>

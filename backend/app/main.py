@@ -16,9 +16,12 @@ from app.models.schemas import (
     MatchSummary,
     M2MBatchRequest,
     M2MMatchRequest,
+    TimeBenchmarkRequest,
     MoveRequest,
     MoveResponse,
     ResignRequest,
+    PagedMatches,
+    PagedTests,
 )
 from app.history_store import HistoryStore
 
@@ -92,19 +95,25 @@ def resign(game_id: str, req: ResignRequest):
 
 @app.post("/m2m/match", response_model=MatchDetail)
 def run_match(req: M2MMatchRequest):
-    match = m2m.run_match(req.white_engine, req.black_engine, req.max_moves, req.start_fen)
+    match = m2m.run_match(req.white_engine, req.black_engine, req.max_moves, req.start_fen, req.time_limit_white, req.time_limit_black)
     return match.to_detail()
 
 
 @app.post("/m2m/batch", response_model=BatchTestSummary)
 def run_batch(req: M2MBatchRequest):
-    batch = m2m.run_batch(req.white_engine, req.black_engine, req.games, req.swap_colors, req.max_moves)
+    batch = m2m.run_batch(req.white_engine, req.black_engine, req.games, req.swap_colors, req.max_moves, req.start_fen, req.time_limit_white, req.time_limit_black)
     return batch.to_summary()
 
 
-@app.get("/m2m/matches", response_model=list[MatchSummary])
-def list_matches():
-    return m2m.list_matches()
+@app.post("/m2m/time-benchmark", response_model=BatchTestSummary)
+def run_time_benchmark(req: TimeBenchmarkRequest):
+    test = m2m.run_time_benchmark(req.white_engine, req.black_engine, req.time_limits, req.games_per_limit, req.swap_colors, req.max_moves, req.start_fen)
+    return test.to_summary()
+
+
+@app.get("/m2m/matches", response_model=PagedMatches)
+def list_matches(page: int = 1, page_size: int = 100):
+    return m2m.list_matches(page=page, page_size=page_size)
 
 
 @app.get("/m2m/matches/{match_id}", response_model=MatchDetail)
@@ -115,9 +124,9 @@ def get_match(match_id: str):
         raise HTTPException(status_code=404, detail="match_not_found")
 
 
-@app.get("/m2m/tests", response_model=list[BatchTestSummary])
-def list_tests():
-    return m2m.list_tests()
+@app.get("/m2m/tests", response_model=PagedTests)
+def list_tests(page: int = 1, page_size: int = 100):
+    return m2m.list_tests(page=page, page_size=page_size)
 
 
 @app.get("/m2m/tests/{test_id}", response_model=BatchTestSummary)

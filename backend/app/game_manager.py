@@ -26,10 +26,17 @@ class GameSession:
     result_reason: Optional[str] = None
     last_move: Optional[str] = None
     created_at: str = field(default_factory=lambda: datetime.utcnow().isoformat())
+    # Debug info: track rollout stats for MCTS engines
+    rollout_stats: List[Dict[str, any]] = field(default_factory=list)  # List of stats per move
 
     def to_state(self) -> GameState:
         turn_color = to_player_color(self.board.turn)
         in_check_status = self.board.is_check()
+        # Calculate average rollouts if we have stats
+        avg_rollouts = None
+        if self.rollout_stats:
+            total_rollouts = sum(s.get("simulations", 0) for s in self.rollout_stats)
+            avg_rollouts = total_rollouts / len(self.rollout_stats) if self.rollout_stats else 0
         return GameState(
             game_id=self.game_id,
             mode=self.mode,
@@ -43,6 +50,7 @@ class GameSession:
             last_move=self.last_move,
             move_history=list(self.move_history),
             in_check=in_check_status,
+            avg_rollouts_per_move=avg_rollouts,
         )
 
 
@@ -123,6 +131,10 @@ class GameManager:
             # No legal move; set status based on board outcome.
             session.status, session.winner, session.result_reason, _ = evaluate_status(session.board)
             return MoveResponse(state=session.to_state(), ai_move=None)
+
+        # Store rollout stats for debugging (especially for MCTS engines)
+        if result.extra_info:
+            session.rollout_stats.append(result.extra_info)
 
         san = session.board.san(result.move)
         session.board.push(result.move)

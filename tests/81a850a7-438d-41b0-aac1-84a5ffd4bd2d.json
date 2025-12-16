@@ -1,0 +1,32 @@
+{
+  "test_id": "81a850a7-438d-41b0-aac1-84a5ffd4bd2d",
+  "kind": "batch",
+  "white_engine": "AILevel.ULTIMATE",
+  "black_engine": "AILevel.LEVEL3",
+  "games": 6,
+  "swap_colors": true,
+  "max_moves": 200,
+  "status": "completed",
+  "matches": [
+    "93523daa-c273-4f5a-9a20-e307e605f940",
+    "78922ff3-3f47-436b-bf93-3436bd148e60",
+    "cd3eb2e0-de69-4d40-9889-363af52c9353",
+    "aa58e036-61d3-4a5c-bc28-fe6b3ead2181",
+    "99c1617d-6061-46d0-8347-a78706b3eb22",
+    "c498c620-5351-431e-a01b-70fe78eb553a"
+  ],
+  "results": {
+    "white": 0,
+    "black": 3,
+    "draw": 3
+  },
+  "completed": 6,
+  "created_at": "2025-12-16T10:00:40.941850",
+  "time_limit_white": 3.0,
+  "time_limit_black": 3.0,
+  "time_limits": null,
+  "games_per_limit": null,
+  "rows": null,
+  "image_base64": null,
+  "start_fen": null
+}

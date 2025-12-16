@@ -14,6 +14,7 @@ export default function PlayPage() {
   const [state, setState] = useState<GameState | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isThinking, setIsThinking] = useState(false);
+  const [aiTimeLimit, setAiTimeLimit] = useState<number>(1.0);
   const [selected, setSelected] = useState<string | null>(null);
   const [legalTargets, setLegalTargets] = useState<string[]>([]);
   const [showModal, setShowModal] = useState(false);
@@ -37,7 +38,7 @@ export default function PlayPage() {
       setError(null);
       // If AI starts (player picked black), immediately ask for AI move
       if (mode === "h2m" && data.turn !== color) {
-        await triggerAiMove(data.game_id);
+        await triggerAiMove(data.game_id, aiTimeLimit);
       }
     } catch (err: any) {
       setError(err.message);
@@ -58,7 +59,7 @@ export default function PlayPage() {
       setSelected(null);
       setLegalTargets([]);
       if (res.state.mode === "h2m" && res.state.status === "in_progress" && res.state.turn !== color) {
-        await triggerAiMove(state.game_id);
+        await triggerAiMove(state.game_id, aiTimeLimit);
       }
       return true;
     } catch (err: any) {
@@ -96,12 +97,12 @@ export default function PlayPage() {
     return styles;
   }, [selected, legalTargets]);
 
-  const triggerAiMove = async (gameId?: string) => {
+  const triggerAiMove = async (gameId?: string, timeLimit?: number) => {
     const targetGame = gameId ?? state?.game_id;
     if (!targetGame) return;
     setIsThinking(true);
     try {
-      const res = await aiMove(targetGame);
+      const res = await aiMove(targetGame, timeLimit);
       setState(res.state);
       setError(null);
     } catch (err: any) {
@@ -157,12 +158,14 @@ export default function PlayPage() {
                 aiLevel={aiLevel}
                 setAiLevel={setAiLevel}
                 color={color}
-                setColor={setColor}
-                onNewGame={newGame}
-                onResign={resign}
-                onAiMove={() => triggerAiMove()}
-                disableAiMove={isThinking || mode === "h2h"}
-              />
+              setColor={setColor}
+              onNewGame={newGame}
+              onResign={resign}
+              onAiMove={() => triggerAiMove(undefined, aiTimeLimit)}
+              disableAiMove={isThinking || mode === "h2h"}
+              aiTimeLimit={aiTimeLimit}
+              setAiTimeLimit={setAiTimeLimit}
+            />
               <StatusBar state={state} isThinking={isThinking} error={error} />
               <MoveList moves={state?.move_history || []} />
             </div>

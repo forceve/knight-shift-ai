@@ -3,7 +3,7 @@ from __future__ import annotations
 import random
 import chess
 
-from app.engine.base_engine import BaseEngine, PIECE_VALUES, SearchResult
+from app.engine.base_engine import BaseEngine, PIECE_VALUES, SearchResult, evaluate_terminal_position
 
 
 class Level2Engine(BaseEngine):
@@ -20,31 +20,43 @@ class Level2Engine(BaseEngine):
             score -= len(board.pieces(piece_type, chess.BLACK)) * value
         return score if board.turn == chess.WHITE else -score
 
-    def minimax(self, board: chess.Board, depth: int) -> tuple[int, int]:
-        if depth == 0 or board.is_game_over():
-            return self.evaluate_material(board) - self.repetition_penalty(board), 1
+    def alphabeta(self, board: chess.Board, depth: int, alpha: int, beta: int) -> tuple[int, int]:
+        # Handle terminal positions in search layer
+        terminal_eval = evaluate_terminal_position(board)
+        if terminal_eval is not None:
+            return terminal_eval, 1
+        
+        if depth == 0:
+            eval_score = self.evaluate_material(board)
+            eval_score -= self.repetition_penalty(board, current_eval=eval_score)
+            return eval_score, 1
+
         best = -10_000_000
-        nodes = 0
-        for move in board.legal_moves:
+        nodes = 1  # count current node
+        for move in self.order_moves(board, board.legal_moves):
             board.push(move)
-            score, child_nodes = self.minimax(board, depth - 1)
+            score, child_nodes = self.alphabeta(board, depth - 1, -beta, -alpha)
             board.pop()
-            nodes += child_nodes + 1
-            best = max(best, -score)
+            nodes += child_nodes
+            score = -score
+            if score > best:
+                best = score
+            if best > alpha:
+                alpha = best
+            if alpha >= beta:
+                break
         return best, nodes
 
     def choose_move(self, board: chess.Board, time_limit: float | None = None) -> SearchResult:
-        depth = 2  # shallow
+        depth = 3  # slightly deeper but still lightweight
         scored = []
         total_nodes = 0
         for move in board.legal_moves:
             board.push(move)
-            score, nodes = self.minimax(board, depth - 1)
+            score, nodes = self.alphabeta(board, depth - 1, -1_000_000, 1_000_000)
             board.pop()
-            total_nodes += nodes + 1
-            # Apply repetition avoidance
-            penalty = self.repetition_penalty(board)
-            scored.append((move, -score - penalty))
+            total_nodes += nodes
+            scored.append((move, -score))
 
         if not scored:
             return SearchResult(None, 0, depth, total_nodes)
