@@ -58,6 +58,17 @@ def friendly_label(name: str) -> str:
     return ENGINE_LABELS.get(key, name or "unknown")
 
 
+def slugify(label: str) -> str:
+    safe: List[str] = []
+    for ch in label.lower():
+        if ch.isalnum():
+            safe.append(ch)
+        elif ch in (" ", "-", "+"):
+            safe.append("_")
+    slug = ''.join(safe).strip('_')
+    return slug or "unknown"
+
+
 def order_key(name: str) -> int:
     return ENGINE_ORDER.get(name, 100 + hash(name) % 100)
 
@@ -137,6 +148,7 @@ def generate_pairing_charts(entries: Iterable[Tuple[Path, Dict[str, Any]]], out_
     )
     grouped["white_win_pct"] = grouped["white_wins"] / grouped["games"] * 100
     grouped["draw_pct"] = grouped["draws"] / grouped["games"] * 100
+    grouped["avg_score_pct"] = (grouped["white_wins"] + 0.5 * grouped["draws"]) / grouped["games"] * 100
     grouped["games"] = grouped["games"].astype(int)
 
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -151,9 +163,18 @@ def generate_pairing_charts(entries: Iterable[Tuple[Path, Dict[str, Any]]], out_
     draw_matrix = grouped.pivot(index="white_label", columns="black_label", values="draw_pct").reindex(
         index=order, columns=order
     )
+    score_matrix = grouped.pivot(index="white_label", columns="black_label", values="avg_score_pct").reindex(
+        index=order, columns=order
+    )
 
     plot_heatmap(win_matrix, "White win rate (%) by pairing", "Win rate (%)", out_dir / "pairing_win_rate.png")
     plot_heatmap(draw_matrix, "Draw rate (%) by pairing", "Draw rate (%)", out_dir / "pairing_draw_rate.png")
+    plot_heatmap(
+        score_matrix,
+        "Average score by pairing (win=1, draw=0.5, loss=0)",
+        "Avg score (%)",
+        out_dir / "pairing_avg_score.png",
+    )
 
 
 def encode_image(path: Path) -> str:
@@ -218,7 +239,8 @@ def generate_time_scaled_charts(
         fig.suptitle(f"Time-scaled benchmark: {white} vs {black}", fontsize=12)
         fig.tight_layout(rect=[0, 0, 1, 0.96])
 
-        out_path = ts_dir / f"time_scaled_{data.get('test_id')}.png"
+        slug = f"{slugify(white)}_vs_{slugify(black)}"
+        out_path = ts_dir / f"time_scaled_{slug}_{data.get('test_id')}.png"
         fig.savefig(out_path, dpi=200)
         plt.close(fig)
 

@@ -1,11 +1,16 @@
-import { BrowserRouter, NavLink, Route, Routes } from "react-router-dom";
+import { BrowserRouter, NavLink, Route, Routes, useLocation } from "react-router-dom";
 import HomePage from "./pages/HomePage";
 import PlayPage from "./pages/PlayPage";
 import M2MPage from "./pages/M2MPage";
 import ReplayPage from "./pages/ReplayPage";
 import HistoryPage from "./pages/HistoryPage";
+import PresentationPage from "./pages/PresentationPage";
 
 function Shell() {
+  const location = useLocation();
+  const isPresentation = location.pathname.startsWith("/presentation");
+  const mainClass = isPresentation ? "w-full px-0 py-0" : "max-w-6xl mx-auto px-4 py-8";
+
   return (
     <div className="min-h-screen text-slate-100 bg-midnight">
       <header className="sticky top-0 z-20 bg-midnight/90 backdrop-blur border-b border-white/5">
@@ -24,17 +29,24 @@ function Shell() {
             <NavLink to="/m2m" className={({ isActive }) => `px-3 py-2 rounded-lg ${isActive ? "bg-white/15" : "hover:bg-white/10"}`}>
               M2M & Tests
             </NavLink>
+            <NavLink
+              to="/presentation"
+              className={({ isActive }) => `px-3 py-2 rounded-lg ${isActive ? "bg-white/15" : "hover:bg-white/10"}`}
+            >
+              Presentation
+            </NavLink>
             <NavLink to="/history" className={({ isActive }) => `px-3 py-2 rounded-lg ${isActive ? "bg-white/15" : "hover:bg-white/10"}`}>
               History
             </NavLink>
           </nav>
         </div>
       </header>
-      <main className="max-w-6xl mx-auto px-4 py-8">
+      <main className={mainClass}>
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/play" element={<PlayPage />} />
           <Route path="/m2m" element={<M2MPage />} />
+          <Route path="/presentation" element={<PresentationPage />} />
           <Route path="/replay/:matchId" element={<ReplayPage />} />
           <Route path="/history" element={<HistoryPage />} />
         </Routes>

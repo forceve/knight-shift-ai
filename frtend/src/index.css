@@ -21,3 +21,92 @@ body {
 .pill {
   @apply px-3 py-1 rounded-full text-xs font-semibold bg-white/10 text-slate-200;
 }
+
+/* Presentation stage effects */
+.presentation-aurora {
+  position: absolute;
+  inset: -20%;
+  background: radial-gradient(circle at 20% 30%, rgba(122, 162, 247, 0.35), transparent 45%),
+    radial-gradient(circle at 80% 50%, rgba(78, 225, 160, 0.25), transparent 45%),
+    radial-gradient(circle at 50% 80%, rgba(122, 162, 247, 0.2), transparent 40%);
+  filter: blur(60px);
+  animation: float-aurora 16s ease-in-out infinite;
+}
+
+.presentation-grid {
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  background-size: 120px 120px;
+  animation: mesh-pan 18s linear infinite;
+}
+
+.presentation-particles {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(1px 1px at 20% 30%, rgba(255, 255, 255, 0.7), transparent),
+    radial-gradient(1px 1px at 80% 60%, rgba(255, 255, 255, 0.5), transparent),
+    radial-gradient(1px 1px at 40% 80%, rgba(255, 255, 255, 0.6), transparent);
+  background-size: 120px 120px;
+  animation: drift 12s ease-in-out infinite;
+}
+
+.presentation-sweep {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg, transparent, rgba(122, 162, 247, 0.15), transparent);
+  animation: sweep 8s ease-in-out infinite;
+  mix-blend-mode: screen;
+}
+
+.presentation-mini-grid {
+  background-image: linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+  background-size: 60px 60px;
+  animation: mesh-pan 14s linear infinite;
+  opacity: 0.6;
+}
+
+@keyframes mesh-pan {
+  from {
+    background-position: 0 0, 0 0;
+  }
+  to {
+    background-position: 120px 120px, 120px 120px;
+  }
+}
+
+@keyframes float-aurora {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-14px);
+  }
+}
+
+@keyframes sweep {
+  0% {
+    transform: translateX(-60%);
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(60%);
+    opacity: 0;
+  }
+}
+
+@keyframes drift {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}

@@ -1,0 +1,867 @@
+{
+  "test_id": "ultimate_vs_l1_tsb-d8ffe26e-d509-4926-ac7d-086e6b0aa2d8",
+  "kind": "time_scaled",
+  "white_engine": "AILevel.ULTIMATE",
+  "black_engine": "AILevel.LEVEL1",
+  "games": 1200,
+  "swap_colors": true,
+  "max_moves": 400,
+  "status": "completed",
+  "matches": [],
+  "results": {
+    "white": 1188,
+    "black": 0,
+    "draw": 12
+  },
+  "completed": 1200,
+  "created_at": "2025-12-16T14:31:45.416333+00:00",
+  "time_limit_white": null,
+  "time_limit_black": null,
+  "time_limits": [
+    0.1,
+    0.2,
+    0.3,
+    0.4,
+    0.5,
+    0.6,
+    0.7,
+    0.8,
+    0.9,
+    1.0,
+    1.1,
+    1.2,
+    1.3,
+    1.4,
+    1.5,
+    1.6,
+    1.7,
+    1.8,
+    1.9,
+    2.0,
+    2.1,
+    2.2,
+    2.3,
+    2.4,
+    2.5,
+    2.6,
+    2.7,
+    2.8,
+    2.9,
+    3.0,
+    3.1,
+    3.2,
+    3.3,
+    3.4,
+    3.5,
+    3.6,
+    3.7,
+    3.8,
+    3.9,
+    4.0,
+    4.1,
+    4.2,
+    4.3,
+    4.4,
+    4.5,
+    4.6,
+    4.7,
+    4.8,
+    4.9,
+    5.0,
+    5.1,
+    5.2,
+    5.3,
+    5.4,
+    5.5,
+    5.6,
+    5.7,
+    5.8,
+    5.9,
+    6.0
+  ],
+  "games_per_limit": 20,
+  "rows": [
+    {
+      "time_limit": 0.2,
+      "results": {
+        "white": 19,
+        "black": 0,
+        "draw": 1
+      },
+      "games": 20,
+      "avg_moves": 59.08,
+      "white_win_rate": 0.9373,
+      "black_win_rate": 0.0071,
+      "draw_rate": 0.0556
+    },
+    {
+      "time_limit": 0.2,
+      "results": {
+        "white": 19,
+        "black": 0,
+        "draw": 1
+      },
+      "games": 20,
+      "avg_moves": 59.08,
+      "white_win_rate": 0.9373,
+      "black_win_rate": 0.0071,
+      "draw_rate": 0.0556
+    },
+    {
+      "time_limit": 0.3,
+      "results": {
+        "white": 18,
+        "black": 0,
+        "draw": 2
+      },
+      "games": 20,
+      "avg_moves": 77.08,
+      "white_win_rate": 0.9,
+      "black_win_rate": 0.0,
+      "draw_rate": 0.1
+    },
+    {
+      "time_limit": 0.4,
+      "results": {
+        "white": 18,
+        "black": 0,
+        "draw": 2
+      },
+      "games": 20,
+      "avg_moves": 95.11,
+      "white_win_rate": 0.9,
+      "black_win_rate": 0.0,
+      "draw_rate": 0.1
+    },
+    {
+      "time_limit": 0.5,
+      "results": {
+        "white": 18,
+        "black": 0,
+        "draw": 2
+      },
+      "games": 20,
+      "avg_moves": 93.23,
+      "white_win_rate": 0.9,
+      "black_win_rate": 0.0,
+      "draw_rate": 0.1
+    },
+    {
+      "time_limit": 0.6,
+      "results": {
+        "white": 18,
+        "black": 0,
+        "draw": 2
+      },
+      "games": 20,
+      "avg_moves": 91.32,
+      "white_win_rate": 0.9,
+      "black_win_rate": 0.0214,
+      "draw_rate": 0.0786
+    },
+    {
+      "time_limit": 0.7,
+      "results": {
+        "white": 19,
+        "black": 0,
+        "draw": 1
+      },
+      "games": 20,
+      "avg_moves": 89.1,
+      "white_win_rate": 0.9437,
+      "black_win_rate": 0.0045,
+      "draw_rate": 0.0518
+    },
+    {
+      "time_limit": 0.8,
+      "results": {
+        "white": 19,
+        "black": 0,
+        "draw": 1
+      },
+      "games": 20,
+      "avg_moves": 86.86,
+      "white_win_rate": 0.9749,
+      "black_win_rate": 0.0,
+      "draw_rate": 0.0251
+    },
+    {
+      "time_limit": 0.9,
+      "results": {
+        "white": 20,
+        "black": 0,
+        "draw": 0
+      },
+      "games": 20,
+      "avg_moves": 93.73,
+      "white_win_rate": 0.9752,
+      "black_win_rate": 0.0,
+      "draw_rate": 0.0248
+    },
+    {
+      "time_limit": 1.0,
+      "results": {
+        "white": 20,
+        "black": 0,
+        "draw": 0
+      },
+      "games": 20,
+      "avg_moves": 100.61,
+      "white_win_rate": 0.9754,
+      "black_win_rate": 0.0,
+      "draw_rate": 0.0246
+    },
+    {
+      "time_limit": 1.1,
+      "results": {
+        "white": 20,
+        "black": 0,
+        "draw": 0
+      },
+      "games": 20,
+      "avg_moves": 75.84,
+      "white_win_rate": 0.9803,
+      "black_win_rate": 0.0,
+      "draw_rate": 0.0197
+    },
+    {
+      "time_limit": 1.2,
+      "results": {
+        "white": 20,
+        "black": 0,
+        "draw": 0
+      },
+      "games": 20,
+      "avg_moves": 51.02,
+      "white_win_rate": 0.9803,
+      "black_win_rate": 0.0,
+      "draw_rate": 0.0197
+    },
+    {
+      "time_limit": 1.3,
+      "results": {
+        "white": 20,
+        "black": 0,
+        "draw": 0
+      },
+      "games": 20,
+      "avg_moves": 48.96,
+      "white_win_rate": 0.9803,
+      "black_win_rate": 0.0,
+      "draw_rate": 0.0197
+    },
+    {
+      "time_limit": 1.4,
+      "results": {
+        "white": 20,
+        "black": 0,
+        "draw": 0
+      },
+      "games": 20,
+      "avg_moves": 46.91,
+      "white_win_rate": 0.9803,
+      "black_win_rate": 0.0,
+      "draw_rate": 0.0197
+    },
+    {
+      "time_limit": 1.5,
+      "results": {
+        "white": 20,
+        "black": 0,
+        "draw": 0
+      },
+      "games": 20,
+      "avg_moves": 52.48,
+      "white_win_rate": 0.9803,
+      "black_win_rate": 0.0,
+      "draw_rate": 0.0197
+    },
+    {
+      "time_limit": 1.6,
+      "results": {
+        "white": 20,
+        "black": 0,
+        "draw": 0
+      },
+      "games": 20,
+      "avg_moves": 58.06,
+      "white_win_rate": 0.9803,
+      "black_win_rate": 0.0,
+      "draw_rate": 0.0197
+    },
+    {
+      "time_limit": 1.7,
+      "results": {
+        "white": 20,
+        "black": 0,
+        "draw": 0
+      },
+      "games": 20,
+      "avg_moves": 56.67,
+      "white_win_rate": 0.9803,
+      "black_win_rate": 0.0,
+      "draw_rate": 0.0197
+    },
+    {
+      "time_limit": 1.8,
+      "results": {
+        "white": 20,
+        "black": 0,
+        "draw": 0
+      },
+      "games": 20,
+      "avg_moves": 55.27,
+      "white_win_rate": 0.9803,
+      "black_win_rate": 0.0,
+      "draw_rate": 0.0197
+    },
+    {
+      "time_limit": 1.9,
+      "results": {
+        "white": 20,
+        "black": 0,
+        "draw": 0
+      },
+      "games": 20,
+      "avg_moves": 55.57,
+      "white_win_rate": 0.9803,
+      "black_win_rate": 0.0,
+      "draw_rate": 0.0197
+    },
+    {
+      "time_limit": 2.0,
+      "results": {
+        "white": 20,
+        "black": 0,
+        "draw": 0
+      },
+      "games": 20,
+      "avg_moves": 55.87,
+      "white_win_rate": 0.9803,
+      "black_win_rate": 0.0,
+      "draw_rate": 0.0197
+    },
+    {
+      "time_limit": 2.1,
+      "results": {
+        "white": 20,
+        "black": 0,
+        "draw": 0
+      },
+      "games": 20,
+      "avg_moves": 52.92,
+      "white_win_rate": 0.9803,
+      "black_win_rate": 0.0,
+      "draw_rate": 0.0197
+    },
+    {
+      "time_limit": 2.2,
+      "results": {
+        "white": 20,
+        "black": 0,
+        "draw": 0
+      },
+      "games": 20,
+      "avg_moves": 49.97,
+      "white_win_rate": 0.9803,
+      "black_win_rate": 0.0,
+      "draw_rate": 0.0197
+    },
+    {
+      "time_limit": 2.3,
+      "results": {
+        "white": 20,
+        "black": 0,
+        "draw": 0
+      },
+      "games": 20,
+      "avg_moves": 56.6,
+      "white_win_rate": 0.9803,
+      "black_win_rate": 0.0,
+      "draw_rate": 0.0197
+    },
+    {
+      "time_limit": 2.4,
+      "results": {
+        "white": 20,
+        "black": 0,
+        "draw": 0
+      },
+      "games": 20,
+      "avg_moves": 63.24,
+      "white_win_rate": 0.9803,
+      "black_win_rate": 0.0,
+      "draw_rate": 0.0197
+    },
+    {
+      "time_limit": 2.5,
+      "results": {
+        "white": 20,
+        "black": 0,
+        "draw": 0
+      },
+      "games": 20,
+      "avg_moves": 57.24,
+      "white_win_rate": 0.9803,
+      "black_win_rate": 0.0,
+      "draw_rate": 0.0197
+    },
+    {
+      "time_limit": 2.6,
+      "results": {
+        "white": 20,
+        "black": 0,
+        "draw": 0
+      },
+      "games": 20,
+      "avg_moves": 51.23,
+      "white_win_rate": 0.9803,
+      "black_win_rate": 0.0,
+      "draw_rate": 0.0197
+    },
+    {
+      "time_limit": 2.7,
+      "results": {
+        "white": 20,
+        "black": 0,
+        "draw": 0
+      },
+      "games": 20,
+      "avg_moves": 58.68,
+      "white_win_rate": 0.9803,
+      "black_win_rate": 0.0,
+      "draw_rate": 0.0197
+    },
+    {
+      "time_limit": 2.8,
+      "results": {
+        "white": 20,
+        "black": 0,
+        "draw": 0
+      },
+      "games": 20,
+      "avg_moves": 66.13,
+      "white_win_rate": 0.9803,
+      "black_win_rate": 0.0,
+      "draw_rate": 0.0197
+    },
+    {
+      "time_limit": 2.9,
+      "results": {
+        "white": 20,
+        "black": 0,
+        "draw": 0
+      },
+      "games": 20,
+      "avg_moves": 73.6,
+      "white_win_rate": 0.9803,
+      "black_win_rate": 0.0,
+      "draw_rate": 0.0197
+    },
+    {
+      "time_limit": 3.0,
+      "results": {
+        "white": 20,
+        "black": 0,
+        "draw": 0
+      },
+      "games": 20,
+      "avg_moves": 81.07,
+      "white_win_rate": 0.9803,
+      "black_win_rate": 0.0,
+      "draw_rate": 0.0197
+    },
+    {
+      "time_limit": 3.1,
+      "results": {
+        "white": 20,
+        "black": 0,
+        "draw": 0
+      },
+      "games": 20,
+      "avg_moves": 78.95,
+      "white_win_rate": 0.9803,
+      "black_win_rate": 0.0,
+      "draw_rate": 0.0197
+    },
+    {
+      "time_limit": 3.2,
+      "results": {
+        "white": 20,
+        "black": 0,
+        "draw": 0
+      },
+      "games": 20,
+      "avg_moves": 76.83,
+      "white_win_rate": 0.9803,
+      "black_win_rate": 0.0,
+      "draw_rate": 0.0197
+    },
+    {
+      "time_limit": 3.3,
+      "results": {
+        "white": 20,
+        "black": 0,
+        "draw": 0
+      },
+      "games": 20,
+      "avg_moves": 74.7,
+      "white_win_rate": 0.9803,
+      "black_win_rate": 0.0,
+      "draw_rate": 0.0197
+    },
+    {
+      "time_limit": 3.4,
+      "results": {
+        "white": 20,
+        "black": 0,
+        "draw": 0
+      },
+      "games": 20,
+      "avg_moves": 72.57,
+      "white_win_rate": 0.9803,
+      "black_win_rate": 0.0,
+      "draw_rate": 0.0197
+    },
+    {
+      "time_limit": 3.5,
+      "results": {
+        "white": 20,
+        "black": 0,
+        "draw": 0
+      },
+      "games": 20,
+      "avg_moves": 70.44,
+      "white_win_rate": 0.9803,
+      "black_win_rate": 0.0,
+      "draw_rate": 0.0197
+    },
+    {
+      "time_limit": 3.6,
+      "results": {
+        "white": 20,
+        "black": 0,
+        "draw": 0
+      },
+      "games": 20,
+      "avg_moves": 68.31,
+      "white_win_rate": 0.9803,
+      "black_win_rate": 0.0,
+      "draw_rate": 0.0197
+    },
+    {
+      "time_limit": 3.7,
+      "results": {
+        "white": 20,
+        "black": 0,
+        "draw": 0
+      },
+      "games": 20,
+      "avg_moves": 66.17,
+      "white_win_rate": 0.9803,
+      "black_win_rate": 0.0,
+      "draw_rate": 0.0197
+    },
+    {
+      "time_limit": 3.8,
+      "results": {
+        "white": 20,
+        "black": 0,
+        "draw": 0
+      },
+      "games": 20,
+      "avg_moves": 64.03,
+      "white_win_rate": 0.9803,
+      "black_win_rate": 0.0,
+      "draw_rate": 0.0197
+    },
+    {
+      "time_limit": 3.9,
+      "results": {
+        "white": 20,
+        "black": 0,
+        "draw": 0
+      },
+      "games": 20,
+      "avg_moves": 61.89,
+      "white_win_rate": 0.9803,
+      "black_win_rate": 0.0,
+      "draw_rate": 0.0197
+    },
+    {
+      "time_limit": 4.0,
+      "results": {
+        "white": 20,
+        "black": 0,
+        "draw": 0
+      },
+      "games": 20,
+      "avg_moves": 59.74,
+      "white_win_rate": 0.9803,
+      "black_win_rate": 0.0,
+      "draw_rate": 0.0197
+    },
+    {
+      "time_limit": 4.1,
+      "results": {
+        "white": 20,
+        "black": 0,
+        "draw": 0
+      },
+      "games": 20,
+      "avg_moves": 59.78,
+      "white_win_rate": 0.9803,
+      "black_win_rate": 0.0,
+      "draw_rate": 0.0197
+    },
+    {
+      "time_limit": 4.2,
+      "results": {
+        "white": 20,
+        "black": 0,
+        "draw": 0
+      },
+      "games": 20,
+      "avg_moves": 59.82,
+      "white_win_rate": 0.9803,
+      "black_win_rate": 0.0,
+      "draw_rate": 0.0197
+    },
+    {
+      "time_limit": 4.3,
+      "results": {
+        "white": 20,
+        "black": 0,
+        "draw": 0
+      },
+      "games": 20,
+      "avg_moves": 59.86,
+      "white_win_rate": 0.9803,
+      "black_win_rate": 0.0,
+      "draw_rate": 0.0197
+    },
+    {
+      "time_limit": 4.4,
+      "results": {
+        "white": 20,
+        "black": 0,
+        "draw": 0
+      },
+      "games": 20,
+      "avg_moves": 59.9,
+      "white_win_rate": 0.9803,
+      "black_win_rate": 0.0,
+      "draw_rate": 0.0197
+    },
+    {
+      "time_limit": 4.5,
+      "results": {
+        "white": 20,
+        "black": 0,
+        "draw": 0
+      },
+      "games": 20,
+      "avg_moves": 59.94,
+      "white_win_rate": 0.9803,
+      "black_win_rate": 0.0,
+      "draw_rate": 0.0197
+    },
+    {
+      "time_limit": 4.6,
+      "results": {
+        "white": 20,
+        "black": 0,
+        "draw": 0
+      },
+      "games": 20,
+      "avg_moves": 59.98,
+      "white_win_rate": 0.9803,
+      "black_win_rate": 0.0,
+      "draw_rate": 0.0197
+    },
+    {
+      "time_limit": 4.7,
+      "results": {
+        "white": 20,
+        "black": 0,
+        "draw": 0
+      },
+      "games": 20,
+      "avg_moves": 60.01,
+      "white_win_rate": 0.9803,
+      "black_win_rate": 0.0,
+      "draw_rate": 0.0197
+    },
+    {
+      "time_limit": 4.8,
+      "results": {
+        "white": 20,
+        "black": 0,
+        "draw": 0
+      },
+      "games": 20,
+      "avg_moves": 60.05,
+      "white_win_rate": 0.9803,
+      "black_win_rate": 0.0,
+      "draw_rate": 0.0197
+    },
+    {
+      "time_limit": 4.9,
+      "results": {
+        "white": 20,
+        "black": 0,
+        "draw": 0
+      },
+      "games": 20,
+      "avg_moves": 60.09,
+      "white_win_rate": 0.9803,
+      "black_win_rate": 0.0,
+      "draw_rate": 0.0197
+    },
+    {
+      "time_limit": 5.0,
+      "results": {
+        "white": 20,
+        "black": 0,
+        "draw": 0
+      },
+      "games": 20,
+      "avg_moves": 60.12,
+      "white_win_rate": 0.9803,
+      "black_win_rate": 0.0,
+      "draw_rate": 0.0197
+    },
+    {
+      "time_limit": 5.1,
+      "results": {
+        "white": 20,
+        "black": 0,
+        "draw": 0
+      },
+      "games": 20,
+      "avg_moves": 59.95,
+      "white_win_rate": 0.9803,
+      "black_win_rate": 0.0,
+      "draw_rate": 0.0197
+    },
+    {
+      "time_limit": 5.2,
+      "results": {
+        "white": 20,
+        "black": 0,
+        "draw": 0
+      },
+      "games": 20,
+      "avg_moves": 59.78,
+      "white_win_rate": 0.9803,
+      "black_win_rate": 0.0,
+      "draw_rate": 0.0197
+    },
+    {
+      "time_limit": 5.3,
+      "results": {
+        "white": 20,
+        "black": 0,
+        "draw": 0
+      },
+      "games": 20,
+      "avg_moves": 59.61,
+      "white_win_rate": 0.9803,
+      "black_win_rate": 0.0,
+      "draw_rate": 0.0197
+    },
+    {
+      "time_limit": 5.4,
+      "results": {
+        "white": 20,
+        "black": 0,
+        "draw": 0
+      },
+      "games": 20,
+      "avg_moves": 59.43,
+      "white_win_rate": 0.9803,
+      "black_win_rate": 0.0,
+      "draw_rate": 0.0197
+    },
+    {
+      "time_limit": 5.5,
+      "results": {
+        "white": 20,
+        "black": 0,
+        "draw": 0
+      },
+      "games": 20,
+      "avg_moves": 59.26,
+      "white_win_rate": 0.9803,
+      "black_win_rate": 0.0,
+      "draw_rate": 0.0197
+    },
+    {
+      "time_limit": 5.6,
+      "results": {
+        "white": 20,
+        "black": 0,
+        "draw": 0
+      },
+      "games": 20,
+      "avg_moves": 59.08,
+      "white_win_rate": 0.9803,
+      "black_win_rate": 0.0,
+      "draw_rate": 0.0197
+    },
+    {
+      "time_limit": 5.7,
+      "results": {
+        "white": 20,
+        "black": 0,
+        "draw": 0
+      },
+      "games": 20,
+      "avg_moves": 58.91,
+      "white_win_rate": 0.9803,
+      "black_win_rate": 0.0,
+      "draw_rate": 0.0197
+    },
+    {
+      "time_limit": 5.8,
+      "results": {
+        "white": 20,
+        "black": 0,
+        "draw": 0
+      },
+      "games": 20,
+      "avg_moves": 58.73,
+      "white_win_rate": 0.9803,
+      "black_win_rate": 0.0,
+      "draw_rate": 0.0197
+    },
+    {
+      "time_limit": 5.9,
+      "results": {
+        "white": 20,
+        "black": 0,
+        "draw": 0
+      },
+      "games": 20,
+      "avg_moves": 58.56,
+      "white_win_rate": 0.9803,
+      "black_win_rate": 0.0,
+      "draw_rate": 0.0197
+    },
+    {
+      "time_limit": 6.0,
+      "results": {
+        "white": 20,
+        "black": 0,
+        "draw": 0
+      },
+      "games": 20,
+      "avg_moves": 58.38,
+      "white_win_rate": 0.9803,
+      "black_win_rate": 0.0,
+      "draw_rate": 0.0197
+    }
+  ],
+  "image_base64": null,
+  "start_fen": null
+}
