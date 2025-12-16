@@ -47,7 +47,7 @@ async function api<T>(path: string, init?: RequestInit): Promise<T> {
   return res.json();
 }
 
-export function createGame(payload: { mode: GameMode; ai_level?: AILevel | null; player_color?: PlayerColor; start_fen?: string | null }) {
+export function createGame(payload: { mode: GameMode; ai_level?: AILevel | null; white_engine?: AILevel | null; black_engine?: AILevel | null; player_color?: PlayerColor; start_fen?: string | null }) {
   return api<GameState>("/games", { method: "POST", body: JSON.stringify(payload) });
 }
 

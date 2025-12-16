@@ -39,6 +39,8 @@ class AILevelsResponse(BaseModel):
 class CreateGameRequest(BaseModel):
     mode: GameMode = GameMode.H2H
     ai_level: Optional[AILevel] = None
+    white_engine: Optional[AILevel] = None  # For M2M mode
+    black_engine: Optional[AILevel] = None  # For M2M mode
     player_color: PlayerColor = PlayerColor.WHITE
     start_fen: Optional[str] = None
 

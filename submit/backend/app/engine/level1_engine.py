@@ -26,9 +26,9 @@ class Level1Engine(BaseEngine):
             # Handle terminal positions in search layer
             terminal_eval = evaluate_terminal_position(board)
             if terminal_eval is not None:
-                score = terminal_eval
+                score = -terminal_eval  # Negate because evaluate_terminal_position returns from opponent's perspective
             else:
-                score = self.evaluate(board)
+                score = -self.evaluate(board)  # Negate because evaluate returns from board.turn's perspective (now opponent)
             board.pop()
             total_nodes += 1
 

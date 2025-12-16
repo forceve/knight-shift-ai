@@ -33,6 +33,10 @@ export function Controls({
   setMode,
   aiLevel,
   setAiLevel,
+  whiteEngine,
+  setWhiteEngine,
+  blackEngine,
+  setBlackEngine,
   color,
   setColor,
   onNewGame,
@@ -46,6 +50,10 @@ export function Controls({
   setMode: (m: GameMode) => void;
   aiLevel: AILevel;
   setAiLevel: (l: AILevel) => void;
+  whiteEngine?: AILevel;
+  setWhiteEngine?: (l: AILevel) => void;
+  blackEngine?: AILevel;
+  setBlackEngine?: (l: AILevel) => void;
   color: PlayerColor;
   setColor: (c: PlayerColor) => void;
   onNewGame: () => void;
@@ -70,32 +78,67 @@ export function Controls({
   return (
     <div className="card p-4 flex flex-col gap-3">
       <div className="flex flex-wrap gap-2">
-        <select value={mode} onChange={(e) => setMode(e.target.value as GameMode)} className="bg-white/10 px-3 py-2 rounded-lg text-sm">
+        <select value={mode} onChange={(e) => setMode(e.target.value as GameMode)} className="bg-white/10 hover:bg-white/15 px-3 py-2 rounded-lg text-sm text-slate-100 border border-white/10 focus:border-white/20 focus:outline-none transition">
           {modes.map((m) => (
-            <option key={m.value} value={m.value}>
+            <option key={m.value} value={m.value} className="bg-slate-800 text-slate-100">
               {m.label}
             </option>
           ))}
         </select>
-        <select
-          value={aiLevel}
-          onChange={(e) => setAiLevel(e.target.value as AILevel)}
-          className="bg-white/10 px-3 py-2 rounded-lg text-sm"
-          disabled={mode === "h2h"}
-        >
-          {availableLevels.map((level) => (
-            <option key={level} value={level}>
-              {getLevelLabel(level)}
-            </option>
-          ))}
-        </select>
-        <select value={color} onChange={(e) => setColor(e.target.value as PlayerColor)} className="bg-white/10 px-3 py-2 rounded-lg text-sm">
-          {colors.map((c) => (
-            <option key={c.value} value={c.value}>
-              {c.label}
-            </option>
-          ))}
-        </select>
+        {mode === "m2m" ? (
+          <>
+            <div className="flex items-center gap-1">
+              <span className="text-xs text-slate-400 px-2">White:</span>
+              <select
+                value={whiteEngine || aiLevel}
+                onChange={(e) => setWhiteEngine?.(e.target.value as AILevel)}
+                className="bg-white/10 hover:bg-white/15 px-3 py-2 rounded-lg text-sm text-slate-100 border border-white/10 focus:border-white/20 focus:outline-none transition"
+              >
+                {availableLevels.map((level) => (
+                  <option key={level} value={level} className="bg-slate-800 text-slate-100">
+                    {getLevelLabel(level)}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="flex items-center gap-1">
+              <span className="text-xs text-slate-400 px-2">Black:</span>
+              <select
+                value={blackEngine || aiLevel}
+                onChange={(e) => setBlackEngine?.(e.target.value as AILevel)}
+                className="bg-white/10 hover:bg-white/15 px-3 py-2 rounded-lg text-sm text-slate-100 border border-white/10 focus:border-white/20 focus:outline-none transition"
+              >
+                {availableLevels.map((level) => (
+                  <option key={level} value={level} className="bg-slate-800 text-slate-100">
+                    {getLevelLabel(level)}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </>
+        ) : (
+          <select
+            value={aiLevel}
+            onChange={(e) => setAiLevel(e.target.value as AILevel)}
+            className="bg-white/10 hover:bg-white/15 px-3 py-2 rounded-lg text-sm text-slate-100 border border-white/10 focus:border-white/20 focus:outline-none transition disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled={mode === "h2h"}
+          >
+            {availableLevels.map((level) => (
+              <option key={level} value={level} className="bg-slate-800 text-slate-100">
+                {getLevelLabel(level)}
+              </option>
+            ))}
+          </select>
+        )}
+        {mode !== "m2m" && (
+          <select value={color} onChange={(e) => setColor(e.target.value as PlayerColor)} className="bg-white/10 hover:bg-white/15 px-3 py-2 rounded-lg text-sm text-slate-100 border border-white/10 focus:border-white/20 focus:outline-none transition">
+            {colors.map((c) => (
+              <option key={c.value} value={c.value} className="bg-slate-800 text-slate-100">
+                {c.label}
+              </option>
+            ))}
+          </select>
+        )}
       </div>
       <div className="flex items-center gap-2 text-sm text-slate-200">
         <label className="flex items-center gap-2 bg-white/5 px-3 py-2 rounded-lg">

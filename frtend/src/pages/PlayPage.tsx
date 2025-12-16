@@ -10,6 +10,8 @@ import { AILevel, GameMode, GameState, PlayerColor } from "../types";
 export default function PlayPage() {
   const [mode, setMode] = useState<GameMode>("h2m");
   const [aiLevel, setAiLevel] = useState<AILevel>("level2");
+  const [whiteEngine, setWhiteEngine] = useState<AILevel>("level2");
+  const [blackEngine, setBlackEngine] = useState<AILevel>("level2");
   const [color, setColor] = useState<PlayerColor>("white");
   const [state, setState] = useState<GameState | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -32,12 +34,22 @@ export default function PlayPage() {
 
   const newGame = async () => {
     try {
-      const payload = { mode, ai_level: mode === "h2h" ? null : aiLevel, player_color: color };
+      const payload: any = { mode, player_color: color };
+      if (mode === "m2m") {
+        payload.white_engine = whiteEngine;
+        payload.black_engine = blackEngine;
+      } else if (mode !== "h2h") {
+        payload.ai_level = aiLevel;
+      }
       const data = await createGame(payload);
       setState(data);
       setError(null);
       // If AI starts (player picked black), immediately ask for AI move
       if (mode === "h2m" && data.turn !== color) {
+        await triggerAiMove(data.game_id, aiTimeLimit);
+      }
+      // If m2m mode, start AI vs AI automatically
+      if (mode === "m2m") {
         await triggerAiMove(data.game_id, aiTimeLimit);
       }
     } catch (err: any) {
@@ -100,11 +112,19 @@ export default function PlayPage() {
   const triggerAiMove = async (gameId?: string, timeLimit?: number) => {
     const targetGame = gameId ?? state?.game_id;
     if (!targetGame) return;
+    if (isThinking) return; // Prevent concurrent calls
     setIsThinking(true);
     try {
       const res = await aiMove(targetGame, timeLimit);
       setState(res.state);
       setError(null);
+      // If m2m mode and game is still in progress, continue with next AI move
+      if (res.state.mode === "m2m" && res.state.status === "in_progress") {
+        // Use setTimeout to avoid blocking and allow UI to update
+        setTimeout(() => {
+          triggerAiMove(res.state.game_id, timeLimit);
+        }, 100);
+      }
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -157,15 +177,19 @@ export default function PlayPage() {
                 setMode={setMode}
                 aiLevel={aiLevel}
                 setAiLevel={setAiLevel}
+                whiteEngine={whiteEngine}
+                setWhiteEngine={setWhiteEngine}
+                blackEngine={blackEngine}
+                setBlackEngine={setBlackEngine}
                 color={color}
-              setColor={setColor}
-              onNewGame={newGame}
-              onResign={resign}
-              onAiMove={() => triggerAiMove(undefined, aiTimeLimit)}
-              disableAiMove={isThinking || mode === "h2h"}
-              aiTimeLimit={aiTimeLimit}
-              setAiTimeLimit={setAiTimeLimit}
-            />
+                setColor={setColor}
+                onNewGame={newGame}
+                onResign={resign}
+                onAiMove={() => triggerAiMove(undefined, aiTimeLimit)}
+                disableAiMove={isThinking || mode === "h2h"}
+                aiTimeLimit={aiTimeLimit}
+                setAiTimeLimit={setAiTimeLimit}
+              />
               <StatusBar state={state} isThinking={isThinking} error={error} />
               <MoveList moves={state?.move_history || []} />
             </div>

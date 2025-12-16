@@ -1,36 +1,53 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type MouseEvent } from "react";
-import ThreeStage from "../components/presentation/ThreeStage";
-import UIStage from "../components/presentation/UIStage";
-import { SceneId, presentationScenes } from "../data/presentation";
-import { clamp01, isFormElement } from "../components/presentation/utils";
-import { useScenePrefetch } from "../components/presentation/useScenePrefetch";
-import { useWarmupQueue } from "../components/presentation/useWarmupQueue";
-import { useThesisDirector } from "../components/presentation/useThesisDirector";
-import ThesisLayer from "../components/presentation/ThesisLayer";
-import { SCENE_IDS_IN_ORDER } from "../components/presentation/sceneChunkLoaders";
-import { useWheelScrub } from "../components/presentation/useWheelScrub";
+import { Outlet, useLocation, useNavigate, useParams } from "react-router-dom";
+import ThreeStage from "../../components/presentation/ThreeStage";
+import { SceneId, presentationScenes } from "../../data/presentation";
+import { clamp01, isFormElement } from "../../components/presentation/utils";
+import { useScenePrefetch } from "../../components/presentation/useScenePrefetch";
+import { useWarmupQueue } from "../../components/presentation/useWarmupQueue";
+import { useThesisDirector } from "../../components/presentation/useThesisDirector";
+import ThesisLayer from "../../components/presentation/ThesisLayer";
+import { SCENE_IDS_IN_ORDER } from "../../components/presentation/sceneChunkLoaders";
+import { useWheelScrub } from "../../components/presentation/useWheelScrub";
 
 const HUD_HIDE_DELAY_MS = 2600;
 const MANUAL_SCRUB_COOLDOWN_MS = 1200;
 
-export default function PresentationPage() {
-  const [activeIndex, setActiveIndex] = useState(0);
+export default function PresentationLayout() {
+  const navigate = useNavigate();
+  const location = useLocation();
+  
+  // Determine active scene from URL
+  // We expect /presentation/:sceneId
+  // If we are at /presentation, we might redirect (handled in App.tsx routes usually),
+  // but here we need to know the active index for the background.
+  const pathParts = location.pathname.split("/");
+  const currentSceneId = pathParts[pathParts.length - 1]; // simplistic, assumes /presentation/sceneX
+  
+  const activeIndex = useMemo(() => {
+    const idx = presentationScenes.findIndex((s) => s.id === currentSceneId);
+    return idx === -1 ? 0 : idx;
+  }, [currentSceneId]);
+
+  const scene = presentationScenes[activeIndex];
+  
   const [autoAdvanceEnabled, setAutoAdvanceEnabled] = useState(true);
   const [hudVisible, setHudVisible] = useState(true);
   const [liteMode, setLiteMode] = useState(false);
   const [wheelEnabled, setWheelEnabled] = useState(true);
   const [isFullscreen, setIsFullscreen] = useState(false);
-  const [audienceSelection, setAudienceSelection] = useState<string | null>(null);
+  
+  // Scene memory to persist time per scene when navigating back/forth
   const sceneMemoryRef = useRef<Partial<Record<SceneId, number>>>({});
   const stageFrameRef = useRef<HTMLDivElement | null>(null);
   const controlHideTimer = useRef<number | null>(null);
   const sceneTRef = useRef(0);
 
-  const scene = presentationScenes[activeIndex];
   const thesis = useThesisDirector(scene);
 
   const prevScene = presentationScenes[(activeIndex - 1 + presentationScenes.length) % presentationScenes.length];
   const nextScene = presentationScenes[(activeIndex + 1) % presentationScenes.length];
+  
   const cachedScenes = useMemo(() => {
     const list = [scene, prevScene, nextScene];
     const map = new Map(list.map((s) => [s.id, s]));
@@ -41,12 +58,14 @@ export default function PresentationPage() {
   const { warmupSceneId, warmupDone } = useWarmupQueue(SCENE_IDS_IN_ORDER, true);
 
   const goNext = useCallback(() => {
-    setActiveIndex((prev) => (prev + 1) % presentationScenes.length);
-  }, []);
+    const nextIdx = (activeIndex + 1) % presentationScenes.length;
+    navigate(`/presentation/${presentationScenes[nextIdx].id}`);
+  }, [activeIndex, navigate]);
 
   const goPrev = useCallback(() => {
-    setActiveIndex((prev) => (prev - 1 + presentationScenes.length) % presentationScenes.length);
-  }, []);
+    const prevIdx = (activeIndex - 1 + presentationScenes.length) % presentationScenes.length;
+    navigate(`/presentation/${presentationScenes[prevIdx].id}`);
+  }, [activeIndex, navigate]);
 
   const showHudTemporarily = useCallback(() => {
     setHudVisible(true);
@@ -56,7 +75,9 @@ export default function PresentationPage() {
     controlHideTimer.current = window.setTimeout(() => setHudVisible(false), HUD_HIDE_DELAY_MS);
   }, []);
 
+  // Restore memory for this scene
   const rememberedT = sceneMemoryRef.current[scene.id] ?? 0;
+  
   const { sceneT, setSceneT, isScrubbing, lastScrubAt } = useWheelScrub({
     stageRef: stageFrameRef,
     beats: scene.meta.beats,
@@ -82,19 +103,18 @@ export default function PresentationPage() {
     sceneTRef.current = sceneT;
   }, [sceneT]);
 
+  // When scene changes, reset T to remembered value (or 0)
   useEffect(() => {
     if (sceneMemoryRef.current[scene.id] === undefined) {
-      sceneMemoryRef.current[scene.id] = rememberedT;
+      sceneMemoryRef.current[scene.id] = 0; // Default start at 0
     }
-    setSceneT(rememberedT);
-    if (scene.id === SceneId.Audience) {
-      const first = scene.payload.branches[0];
-      setAudienceSelection(first ? first.id : null);
-    } else {
-      setAudienceSelection(null);
-    }
-  }, [rememberedT, scene, scene.id, scene.payload, setSceneT]);
+    const targetT = sceneMemoryRef.current[scene.id] ?? 0;
+    setSceneT(targetT);
+    
+    // Auto-reset audience selection is handled in SceneRoute or we pass a key to force reset
+  }, [scene.id, setSceneT]); // scene.id is the trigger
 
+  // Playback Loop
   useEffect(() => {
     let raf: number;
     let lastTs: number | null = null;
@@ -217,7 +237,7 @@ export default function PresentationPage() {
           </div>
           <div className="presentation-overlay-layer">
             <ThesisLayer thesis={thesis} />
-            <UIStage scene={scene} sceneT={sceneT} liteMode={liteMode} audienceSelection={audienceSelection} onSelectBranch={setAudienceSelection} />
+            <Outlet context={{ scene, sceneT, liteMode }} />
           </div>
         </div>
       </div>
@@ -251,6 +271,10 @@ export default function PresentationPage() {
                   className={`hud-beat ${sceneT >= beat.t ? "past" : ""} ${beat.snap ? "snap" : ""}`}
                   style={{ left: `${beat.t * 100}%` }}
                   title={beat.label}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setSceneT(beat.t, { manual: true });
+                  }}
                 />
               ))}
               <div className="hud-playhead" style={{ left: `${progressPercent}%` }} />
@@ -276,3 +300,4 @@ export default function PresentationPage() {
     </div>
   );
 }
+

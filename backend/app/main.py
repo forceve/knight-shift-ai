@@ -53,7 +53,13 @@ def get_ai_levels():
 
 @app.post("/games", response_model=GameState)
 def create_game(req: CreateGameRequest):
-    session = games.create_game(req.mode, req.ai_level, req.player_color, req.start_fen)
+    # For M2M mode, use white_engine and black_engine if provided, otherwise fall back to ai_level for both
+    if req.mode == GameMode.M2M:
+        white_engine = req.white_engine if req.white_engine is not None else req.ai_level
+        black_engine = req.black_engine if req.black_engine is not None else req.ai_level
+        session = games.create_game(req.mode, req.ai_level, req.player_color, req.start_fen, white_engine, black_engine)
+    else:
+        session = games.create_game(req.mode, req.ai_level, req.player_color, req.start_fen)
     return session.to_state()
 
 

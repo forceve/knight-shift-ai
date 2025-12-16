@@ -19,6 +19,8 @@ class GameSession:
     mode: GameMode
     board: chess.Board
     ai_level: Optional[AILevel] = None
+    white_engine: Optional[AILevel] = None  # For M2M mode
+    black_engine: Optional[AILevel] = None  # For M2M mode
     player_color: Optional[PlayerColor] = None
     move_history: List[str] = field(default_factory=list)
     status: str = "in_progress"
@@ -59,7 +61,7 @@ class GameManager:
         self.games: Dict[str, GameSession] = {}
         self.history = history
 
-    def create_game(self, mode: GameMode, ai_level: Optional[AILevel], player_color: Optional[PlayerColor], start_fen: Optional[str]) -> GameSession:
+    def create_game(self, mode: GameMode, ai_level: Optional[AILevel], player_color: Optional[PlayerColor], start_fen: Optional[str], white_engine: Optional[AILevel] = None, black_engine: Optional[AILevel] = None) -> GameSession:
         board = chess.Board(start_fen) if start_fen else chess.Board()
         game_id = str(uuid.uuid4())
         session = GameSession(
@@ -67,6 +69,8 @@ class GameManager:
             mode=mode,
             board=board,
             ai_level=ai_level,
+            white_engine=white_engine,
+            black_engine=black_engine,
             player_color=player_color,
         )
         self.games[game_id] = session
@@ -117,15 +121,25 @@ class GameManager:
             return MoveResponse(state=session.to_state(), ai_move=None)
         if session.mode == GameMode.H2H:
             raise ValueError("ai_not_enabled")
-        if session.ai_level is None:
-            raise ValueError("missing_ai_level")
-        # Ensure it is AI's turn in H2M; for M2M we allow either side since both AI.
-        if session.mode == GameMode.H2M and session.player_color is not None:
-            player_is_white = session.player_color == PlayerColor.WHITE
-            if session.board.turn == player_is_white:
-                raise ValueError("ai_wait_player_turn")
+        
+        # Determine which engine to use based on mode and turn
+        if session.mode == GameMode.M2M:
+            # M2M mode: use white_engine or black_engine based on turn
+            if session.white_engine is None or session.black_engine is None:
+                raise ValueError("missing_ai_level")
+            engine_level = session.white_engine if session.board.turn == chess.WHITE else session.black_engine
+        else:
+            # H2M mode: use ai_level
+            if session.ai_level is None:
+                raise ValueError("missing_ai_level")
+            engine_level = session.ai_level
+            # Ensure it is AI's turn in H2M
+            if session.player_color is not None:
+                player_is_white = session.player_color == PlayerColor.WHITE
+                if session.board.turn == player_is_white:
+                    raise ValueError("ai_wait_player_turn")
 
-        engine = get_engine(session.ai_level)
+        engine = get_engine(engine_level)
         result = engine.choose_move(session.board, time_limit=time_limit)
         if result.move is None:
             # No legal move; set status based on board outcome.
