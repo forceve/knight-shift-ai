@@ -1,0 +1,98 @@
+% !TeX program = xelatex
+\documentclass[12pt]{article}
+\usepackage[a4paper,margin=1in]{geometry}
+\usepackage{hyperref}
+\usepackage{enumitem}
+\usepackage{fontspec}
+\usepackage{xeCJK}
+\setmainfont{TeX Gyre Termes}
+% CJK font setting - commented out since no CJK text is used
+% If needed, uncomment and ensure the font is installed:
+% \setCJKmainfont{Noto Serif CJK SC}
+
+\title{\textbf{Night Shift AI Studio — Optimized Talk Outline + Keywords + Cue Notes}}
+\author{Grey}
+\date{}
+
+\begin{document}
+\maketitle
+
+\section*{One-line Thesis (Hero)}
+\begin{itemize}[leftmargin=1.2em]
+\item \textbf{DIFFICULTY = COMPUTATION BUDGET} \\
+Budget controls \textit{search horizon / efficiency / evaluation richness / randomness}.
+\end{itemize}
+
+\section*{Rubric-aligned goals (what you must visibly do)}
+\begin{itemize}[leftmargin=1.2em]
+\item \textbf{Organization}: clear sections, logical sequence, audience can follow.
+\item \textbf{Accuracy}: precise concepts, correct terminology, tie theory to practice.
+\item \textbf{Engagement \& time}: eye contact, minimal note-reading, finish on time.
+\end{itemize}
+
+\section*{Timing Plan (9:30 + optional live demo)}
+\begin{itemize}[leftmargin=1.2em]
+\item Scene0: 0:00--0:20
+\item Scene1: 0:20--1:20
+\item Scene2: 1:20--2:05
+\item Scene3: 2:05--3:05
+\item Scene4: 3:05--3:45
+\item Scene5: 3:45--5:05
+\item Scene6: 5:05--6:05
+\item Scene7: 6:05--8:20
+\item Scene8: 8:20--9:00
+\item Scene9: 9:00--9:30 $\rightarrow$ /play demo
+\end{itemize}
+
+\section*{Stage Keywords by Scene (memorize these)}
+\subsection*{Scene0 — Title / Claim}
+\textbf{Keywords}: controllable difficulty; budget; why it matters (user experience + evaluation). \\
+\textbf{Cue}: ``Not just stronger chess. A controllable difficulty system.''
+
+\subsection*{Scene1 — Freeze (Same board, different choice)}
+\textbf{Keywords}: same position; hanging queen / trap; pause; split-screen; verdict. \\
+\textbf{Cue}: ``Before I explain algorithms, watch the \textit{behavior difference}.''
+
+\subsection*{Scene2 — Difficulty Dial (4 levels)}
+\textbf{Keywords}: L1 greedy; L2 minimax d=3; L3 quiescence+TT (0.6s); ULT PeSTO (1.2s). \\
+\textbf{Cue}: ``Levels are \textit{budget presets}, not random names.''
+
+\subsection*{Scene3 — Knobs (why budget changes behavior)}
+\textbf{Keywords}: Horizon; Efficiency; Eval richness; Randomness; presets mapping. \\
+\textbf{Cue}: ``Difficulty is not one knob; it’s four knobs.''
+
+\subsection*{Scene4 — Ladder (personas)}
+\textbf{Keywords}: greedy $\rightarrow$ shallow $\rightarrow$ practical $\rightarrow$ strong eval; stability; fewer traps. \\
+\textbf{Cue}: ``This is a behavior ladder you can feel.''
+
+\subsection*{Scene5 — Search X-Ray}
+\textbf{Keywords}: PV; alpha-beta pruning; iterative deepening; quiescence; horizon effect. \\
+\textbf{Cue}: ``Internal reason: budget reshapes the search tree.''
+
+\subsection*{Scene6 — Evaluation Harness}
+\textbf{Keywords}: reproducible; fair; scalable; 3 protocols; same rules + reversed colors. \\
+\textbf{Cue}: ``This page is my credibility insurance.''
+
+\subsection*{Scene7 — Evidence Wall + TSB strip}
+\textbf{Keywords}: separation; scoreboard; diminishing returns; trade-off curve; TSB stability. \\
+\textbf{Cue}: ``Two posters: (1) levels separate, (2) returns diminish.''
+
+\subsection*{Scene8 — Future Work (paper-faithful)}
+\textbf{Keywords}: performance optimization; dynamic difficulty adjustment; generalization. \\
+\textbf{Cue}: ``Clear next steps, still measurable.''
+
+\subsection*{Scene9 — Closing / Handoff}
+\textbf{Keywords}: thesis; 3 recaps; open demo; Q\&A. \\
+\textbf{Cue}: ``Difficulty equals budget. Here’s the proof. Now try it.''
+
+\section*{Micro Delivery Checklist (do this to score the rubric)}
+\begin{enumerate}[leftmargin=1.4em]
+\item \textbf{Hook}: one sentence thesis first; pun optional and short.
+\item \textbf{Audience pause}: Scene1 question $\rightarrow$ \textit{2 seconds silence}.
+\item \textbf{Slide driving}: one beat = one sentence. Never explain two beats at once.
+\item \textbf{Numbers}: only say numbers you can point to on screen (avoid guessing).
+\item \textbf{Eye contact}: scan left-middle-right each 1--2 sentences.
+\item \textbf{Time}: if behind, skip Scene7 optional human-check card; keep Scene9 strong.
+\end{enumerate}
+
+\end{document}

@@ -101,3 +101,27 @@ export type PagedTests = {
   page_size: number;
   total: number;
 };
+
+export type TrainingConfig = {
+  games: number;
+  max_moves: number;
+  time_limit: number;
+  epochs: number;
+  batch_size: number;
+  lr: number;
+  load_checkpoint?: string | null;
+  use_cnn: boolean;
+  simulations: number;
+  workers?: number | null;
+};
+
+export type TrainingStatus = {
+  training_id: string;
+  status: string;
+  config: TrainingConfig;
+  progress: Record<string, any>;
+  started_at?: string | null;
+  completed_at?: string | null;
+  error?: string | null;
+  checkpoint_path?: string | null;
+};

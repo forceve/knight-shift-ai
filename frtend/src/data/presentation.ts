@@ -1,3 +1,9 @@
+import imgL2vsL1 from '../image/l2vsl1.png';
+import imgL3vsL1 from '../image/l3vsl1.png';
+import imgL3vsL2 from '../image/l3vsl2.png';
+import imgUltvsL1 from '../image/ultvsl1.png';
+import imgUltvsL3 from '../image/ultvsl3.png';
+
 export const MAIN_THESIS = "Difficulty is a computation budget.";
 
 export type ThesisMode = "hero" | "echo" | "punch";
@@ -24,9 +30,8 @@ export enum SceneId {
   XRay = "scene5",
   Pipeline = "scene6",
   Landscape = "scene7",
-  Audience = "scene8",
-  Future = "scene9",
-  Handoff = "scene10",
+  FutureLite = "scene8",
+  Closing = "scene9",
 }
 
 export type SceneMeta = {
@@ -48,78 +53,204 @@ export type AmbientPayload = {
   cameraSway: { amplitude: number; speed: number };
 };
 
-export type MoveHighlight = { from: string; to: string; color?: string; label?: string };
-export type FreezeScript = {
+// --- Updated Scene 1 Types ---
+export type FreezeScriptStep = {
   fen: string;
-  l1Move: string;
-  ultMove: string;
-  highlights: MoveHighlight[];
-  note: string;
+  lastMove?: string;
+  checkmate?: "white" | "black";
+  arrows?: string[];
 };
-export type FreezePayload = { scripts: FreezeScript[] };
 
-export type BudgetProfile = {
+export type FreezePayload = {
+  initialFen: string;
+  opponentMove: { from: string; to: string; san: string };
+  leftLine: { steps: FreezeScriptStep[]; tag: string; verdict: string };
+  rightLine: { steps: FreezeScriptStep[]; tag: string; verdict: string };
+  // Legacy compatibility (optional)
+  scripts?: any[];
+};
+
+// --- Updated Scene 2 Types ---
+export type DialPayload = {
+  profiles: {
+    level: "L1" | "L2" | "L3" | "ULT";
+    depthLabel: string;
+    avgTimeMs: number | null;
+    avgNodes: number | null;
+    persona: string;
+  }[];
+  definitionLines: string[];
+  bridgeLine: string;
+  nextLine: string;
+  // Legacy compatibility
+  levels?: any[];
+  dialLabel?: string;
+};
+
+export type KnobKey = "horizon" | "efficiency" | "evalRichness" | "randomness";
+
+export type KnobDef = {
+  key: KnobKey;
+  label: string;
+  oneLiner: string;
+  captionLow: string;
+  captionHigh: string;
+};
+
+export type KnobLevelProfile = {
   id: "L1" | "L2" | "L3" | "ULT";
-  depth: number;
-  nodes: number;
-  timeMs: number;
   persona: string;
-  dialAngle: number;
+  note: string;
+  values: Record<KnobKey, number>; // 0..100
 };
-export type BudgetPayload = { levels: BudgetProfile[]; dialLabel: string };
 
-export type KnobProfile = {
-  level: BudgetProfile["id"];
-  horizon: number;
-  efficiency: number;
-  evalRichness: number;
-  randomness: number;
+export type KnobsPayload = {
+  headline: string;    // "THE KNOBS"
+  subline: string;     // "How the budget is spent"
+  claim: string;
+  knobDefs: KnobDef[];
+  levels: KnobLevelProfile[];
+  fixedBudgetDemo?: {
+    label: string; // "Budget fixed: 2000ms/move"
+    a: { name: string; values: Record<KnobKey, number>; caption: string };
+    b: { name: string; values: Record<KnobKey, number>; caption: string };
+  };
+  bridgeLine: string;  // to X-Ray
 };
-export type KnobPayload = { knobs: KnobProfile[] };
 
-export type LadderCard = {
-  level: BudgetProfile["id"];
-  fen: string;
-  move: string;
-  tag: string;
-  blurb: string;
+export type LadderRung = {
+  id: "L1"|"L2"|"L3"|"ULT";
+  cardTitle: string;
+  feels: string;
+  signature: string;
+  chips: [string, string];
+  stats: { rating: number; humanWinRate: number };
+  detail: {
+    config: string[]; // lines
+    why: string[];    // 2 lines
+    human: string;    // one line
+  };
 };
-export type LadderPayload = { cards: LadderCard[] };
 
-export type XRayFrame = {
-  fen: string;
-  pv: string[];
-  prunedRatio: number;
-  heatSquares: string[];
+export type LadderPayload = {
+  headline: string;
+  subline: string;
+  thesisLine: string;
+  bridgeLine: string;
+  mappingLines: string[];
+  rungs: LadderRung[];
+  layout: {
+    spineStart: {x:number;y:number};
+    spineEnd: {x:number;y:number};
+    tValues: number[];
+    cardOffsetN: number;
+    cardOffsetT: number;
+  };
 };
-export type XRayPayload = { frames: XRayFrame[] };
 
-export type PipelineNode = { id: string; label: string; blurb: string };
-export type PipelinePayload = { nodes: PipelineNode[]; summaryCard: { matches: number; winrate: number; notes: string } };
+export type XRayLevel = "L1" | "L2" | "L3" | "ULT";
+
+export type XRayPayload = {
+  headline: string;
+  subline: string;
+  baseFen: string;
+  levels: Record<XRayLevel, {
+    pvUci: string[];
+    metrics: {
+      depthLabel: string;
+      timeMs: number;
+      nodes: number;
+      cutoffs: number;
+      prunedRatio: number;
+      quiescence: boolean;
+    };
+    treeSpec: {
+      seed: number;
+      branching: number[];
+      pvIndices: number[];
+      prunedRatio: number;
+      showQExtension: boolean;
+    };
+  }>;
+  compareLines: string[];
+  bridgeLine: string;
+};
+
+export type HarnessLane = {
+  id: "m2m_standard" | "h2m_human" | "m2m_timescaled";
+  title: string;
+  bullets: string[];     // 写死关键数字
+  tags?: string[];       // 可选
+};
+
+export type HarnessPayload = {
+  headline: string;
+  subline: string;
+  thesisLine: string;
+
+  trunkNodes: string[];  // ["Config","Queue (Batch)","Workers (≤20)",...,"Figures"]
+
+  lanes: HarnessLane[];
+
+  rulesCard: string[];        // 三条写死
+  throughputCard: string[];   // 三条写死
+
+  outputs: { id: "score"|"tradeoff"|"gamestats"; label: string }[]; // 三张缩略卡
+  bridgeLine: string;
+};
+
+export type TSBFigure = {
+  id: string;
+  label: string;     // "L3 vs L2"
+  src: string;       // "/fig/tsb_l3_l2.svg"
+  takeaway: string;  // short one-liner
+};
 
 export type LandscapePayload = {
   roundRobin: number[][];
-  costStrengthPoints: { level: BudgetProfile["id"]; cost: number; strength: number }[];
+  costStrengthPoints: { level: "L1" | "L2" | "L3" | "ULT"; cost: number; strength: number }[];
   heightmap: number[];
+  tsb: {
+    title: string;          // "Time-Scaled Benchmark (TSB)"
+    figures: TSBFigure[];   // EXACTLY 5
+    defaultIndex: number;   // e.g. 1 (L3 vs L2)
+    hint: string;           // "T toggle · [ ] switch · Enter zoom"
+    showFromBeat: number;   // 4
+  };
 };
 
-export type AudienceBranch = {
-  id: string;
-  label: string;
-  moves: string[];
-  verdict: string;
-  tag: string;
-  perLevelEvals: { level: BudgetProfile["id"]; eval: string }[];
-};
-export type AudiencePayload = { fen: string; branches: AudienceBranch[] };
+export type FutureLitePayload = {
+  headline: string;   // "FUTURE WORK"
+  subline: string;    // "All items are stated in the paper."
 
-export type FuturePayload = {
-  eloCurveFixed: { x: number; y: number }[];
-  eloCurveDynamic: { x: number; y: number }[];
-  styleCard: { sliders: { label: string; value: number }[]; notes: string[] };
+  cards: Array<{
+    id: "opt" | "dda" | "gen";
+    title: string;
+    bullets: string[];
+  }>;
+
+  impact: {
+    title: string; // "Impact"
+    rows: Array<{
+      id: "opt" | "dda" | "gen";
+      goal: string;
+      change: string;
+      why: string;
+    }>;
+    badge: string; // "Explore learned evaluation functions (Conclusion)"
+  };
+
+  punch: string;
+  bridge: string; // "Next: live demo"
 };
 
-export type HandoffPayload = { ctaText: string; route: string };
+export type ClosingPayload = {
+  headline: string;  // "THANK YOU"
+  hero: string;      // "DIFFICULTY = COMPUTATION BUDGET"
+  recap: string[];   // 3 bullets
+  cta: string;       // "Press Space to open live demo → /play"
+  footnote?: string; // "Q&A"
+};
 
 export type SceneBase<T extends SceneId, P> = {
   id: T;
@@ -130,15 +261,32 @@ export type SceneBase<T extends SceneId, P> = {
 export type PresentationScene =
   | SceneBase<SceneId.Ambient, AmbientPayload>
   | SceneBase<SceneId.Freeze, FreezePayload>
-  | SceneBase<SceneId.Dial, BudgetPayload>
-  | SceneBase<SceneId.Knobs, KnobPayload>
+  | SceneBase<SceneId.Dial, DialPayload>
+  | SceneBase<SceneId.Knobs, KnobsPayload>
   | SceneBase<SceneId.Ladder, LadderPayload>
   | SceneBase<SceneId.XRay, XRayPayload>
-  | SceneBase<SceneId.Pipeline, PipelinePayload>
+  | SceneBase<SceneId.Pipeline, HarnessPayload>
   | SceneBase<SceneId.Landscape, LandscapePayload>
-  | SceneBase<SceneId.Audience, AudiencePayload>
-  | SceneBase<SceneId.Future, FuturePayload>
-  | SceneBase<SceneId.Handoff, HandoffPayload>;
+  | SceneBase<SceneId.FutureLite, FutureLitePayload>
+  | SceneBase<SceneId.Closing, ClosingPayload>;
+
+// --- Helper for Beats ---
+export const FREEZE_BEATS: SceneBeat[] = [
+  { t: 0.0, label: "Intro" },
+  { t: 0.2, label: "Opponent Move" },
+  { t: 0.4, label: "Split" },
+  { t: 0.6, label: "Parallel 1" },
+  { t: 0.8, label: "Parallel 2" },
+  { t: 1.0, label: "Merge" },
+];
+
+export const DIAL_BEATS: SceneBeat[] = [
+  { t: 0.0, label: "Hero" },
+  { t: 0.25, label: "Definition" },
+  { t: 0.5, label: "Dial Sweep" },
+  { t: 0.75, label: "Bridge" },
+  { t: 1.0, label: "Next" },
+];
 
 export const presentationScenes: PresentationScene[] = [
   {
@@ -154,7 +302,7 @@ export const presentationScenes: PresentationScene[] = [
       thesisCue: {
         mode: "hero",
         headline: MAIN_THESIS,
-        subline: "Budget ladder as a product",
+        subline: "Knightshift: a multilevel AI chess system",
         effect: "glow",
       },
       beats: [
@@ -176,7 +324,7 @@ export const presentationScenes: PresentationScene[] = [
       title: "Time Freeze",
       badge: "Scene 1",
       kicker: "Same position, two futures",
-      durationMs: 11000,
+      durationMs: 12000,
       takeaway: "Difficulty = budget. Freeze shows how budget changes the line.",
       voiceoverHint: "Freeze. L1 plays for immediacy; Ultimate invests budget for stability.",
       thesisCue: {
@@ -185,120 +333,84 @@ export const presentationScenes: PresentationScene[] = [
         subline: MAIN_THESIS,
         emphasize: ["futures"],
         effect: "split",
-        durationMs: 2400,
         chapterTag: "Hook",
       },
-      beats: [
-        { t: 0.0, label: "Position" },
-        { t: 0.2, label: "Freeze" },
-        { t: 0.35, label: "Arrows", snap: true },
-        { t: 0.6, label: "Note" },
-        { t: 0.9, label: "End" },
-      ],
+      beats: FREEZE_BEATS,
     },
     payload: {
-      scripts: [
-        {
-          fen: "r1bqk2r/pppp1ppp/2n2n2/8/2BPP3/5N2/PP1N1PPP/R2QK2R b KQkq - 0 8",
-          l1Move: "...Nxe4",
-          ultMove: "...d6",
-          highlights: [
-            { from: "c6", to: "d4", color: "#76e5b1", label: "L1 jump" },
-            { from: "c6", to: "e5", color: "#8fb3ff", label: "ULT stabilise" },
-          ],
-          note: "Italian tension: jump in vs. reinforce the center.",
-        },
-        {
-          fen: "rnbq1rk1/p3bpp1/1p3n1p/2pp4/3P3B/2NBPN2/PP3PPP/R2QK2R w KQ - 0 10",
-          l1Move: "O-O",
-          ultMove: "dxc5",
-          highlights: [
-            { from: "d4", to: "c5", color: "#76e5b1" },
-            { from: "f1", to: "e2", color: "#8fb3ff" },
-          ],
-          note: "QGD pressure: castle vs. cash in space.",
-        },
-        {
-          fen: "rn1qkb1r/1p3ppp/p2pbn2/4p3/4P3/1NN1BP2/PPP3PP/R2QKB1R b KQkq - 0 8",
-          l1Move: "...Be7",
-          ultMove: "...h5",
-          highlights: [
-            { from: "f8", to: "e7", color: "#76e5b1" },
-            { from: "h7", to: "h5", color: "#ff9b9b" },
-          ],
-          note: "Najdorf: normal develop vs. ambitious kingside space.",
-        },
-        {
-          fen: "r1bqkb1r/pp1n1ppp/2n1p3/2ppP3/3P4/2PB4/PP1NNPPP/R1BQK2R b KQkq - 2 7",
-          l1Move: "...Qb6",
-          ultMove: "...f6",
-          highlights: [
-            { from: "d7", to: "f6", color: "#8fb3ff" },
-            { from: "d5", to: "e4", color: "#76e5b1" },
-          ],
-          note: "French Tarrasch: pressure pawn vs. challenge the chain directly.",
-        },
-        {
-          fen: "rn1qkbnr/pp3ppp/4p3/2ppPb2/3P4/4BN2/PPP1BPPP/RN1QK2R b KQkq - 1 6",
-          l1Move: "...Nc6",
-          ultMove: "...cxd4",
-          highlights: [
-            { from: "c5", to: "d4", color: "#76e5b1" },
-            { from: "b8", to: "c6", color: "#8fb3ff" },
-          ],
-          note: "Caro Advance: reinforce vs. simplify.",
-        },
-        {
-          fen: "r1bqk2r/ppp1bppp/1nn5/4p3/8/2N2NP1/PP1PPPBP/R1BQ1RK1 w kq - 4 8",
-          l1Move: "d3",
-          ultMove: "a3",
-          highlights: [
-            { from: "d2", to: "d3", color: "#76e5b1" },
-            { from: "a2", to: "a3", color: "#8fb3ff" },
-          ],
-          note: "English: quick center vs. slowing the queenside bind.",
-        },
-        {
-          fen: "r1bq1rk1/ppp2pbp/2np1np1/3Pp3/2P1P3/2N2N2/PP2BPPP/R1BQ1RK1 b - - 0 8",
-          l1Move: "...Ne7",
-          ultMove: "...Nd4",
-          highlights: [
-            { from: "c6", to: "d4", color: "#8fb3ff" },
-            { from: "f6", to: "e4", color: "#76e5b1" },
-          ],
-          note: "King's Indian: reroute vs. strike.",
-        },
-        {
-          fen: "rnbqk2r/pp2ppbp/6p1/2p5/3PP3/2P1BN2/P4PPP/R2QKB1R b KQkq - 1 8",
-          l1Move: "...Nc6",
-          ultMove: "...Qa5",
-          highlights: [
-            { from: "d8", to: "a5", color: "#8fb3ff" },
-            { from: "b8", to: "c6", color: "#76e5b1" },
-          ],
-          note: "Grünfeld: develop vs. pin the center.",
-        },
-        {
-          fen: "rn1qkb1r/pp3ppp/2p1pn2/5b2/P1BP4/2N1PN2/1P3PPP/R1BQK2R b KQkq - 0 7",
-          l1Move: "...Nbd7",
-          ultMove: "...Bb4",
-          highlights: [
-            { from: "c6", to: "b4", color: "#8fb3ff" },
-            { from: "b8", to: "d7", color: "#76e5b1" },
-          ],
-          note: "Slav: safe develop vs. active pin.",
-        },
-        {
-          fen: "r1b2rk1/ppppnppp/2n2q2/2b5/2BNP3/2P1B3/PP3PPP/RN1QK2R w KQ - 3 8",
-          l1Move: "O-O",
-          ultMove: "Nxc6",
-          highlights: [
-            { from: "d4", to: "c6", color: "#ffb347" },
-            { from: "e1", to: "g1", color: "#76e5b1" },
-          ],
-          note: "Scotch middlegame: stabilise king vs. simplify tension.",
-        },
-      ],
+      // 6.Nxe5, Black to move. The position provided by user:
+      // r2qkbnr/ppp2ppp/2np4/4N2b/2B1P3/2N4P/PPPP1PP1/R1BQK2R b KQkq - 0 6
+      initialFen: "r2qkbnr/ppp2ppp/2np4/4N2b/2B1P3/2N4P/PPPP1PP1/R1BQK2R b KQkq - 0 6",
+      // White played Nxe5 (f3->e5) to reach this.
+      opponentMove: { from: "f3", to: "e5", san: "Nxe5" },
+      leftLine: {
+        tag: "Greedy / L1",
+        verdict: "?? Blunder",
+        steps: [
+          // 6...Bxd1??
+          {
+            fen: "r2qkbnr/ppp2ppp/2np4/4N3/2B1P3/2N4P/PPPP1PP1/R1BbK2R w KQkq - 0 7",
+            lastMove: "h5d1",
+            arrows: ["c4->f7"], 
+          },
+          // 7.Bxf7+
+          {
+            fen: "r2qkbnr/ppp2Bpp/2np4/4N3/4P3/2N4P/PPPP1PP1/R1BbK2R b KQkq - 0 7",
+            lastMove: "c4f7",
+            arrows: ["e8->e7"],
+          },
+          // 7...Ke7
+          {
+            fen: "r2q1bnr/ppp1kBpp/2np4/4N3/4P3/2N4P/PPPP1PP1/R1BbK2R w KQ - 1 8",
+            lastMove: "e8e7",
+            arrows: ["c3->d5"],
+          },
+          // 8.Nd5#
+          {
+            fen: "r2q1bnr/ppp1kBpp/2np4/3NN3/4P3/7P/PPPP1PP1/R1BbK2R b KQ - 2 8",
+            lastMove: "c3d5",
+            checkmate: "white",
+            arrows: [],
+          },
+        ],
+      },
+      rightLine: {
+        tag: "Tactician / L3",
+        verdict: "!! Counter",
+        steps: [
+          // 6...Nxe5! (Start: 2np4/4N2b -> End: 3p4/4n2b)
+          {
+            fen: "r2qkbnr/ppp2ppp/3p4/4n2b/2B1P3/2N4P/PPPP1PP1/R1BQK2R w KQkq - 0 7",
+            lastMove: "c6e5",
+            arrows: ["c4->f7"],
+          },
+          // 7.Bxf7+
+          {
+            fen: "r2qkbnr/ppp2Bpp/3p4/4n2b/4P3/2N4P/PPPP1PP1/R1BQK2R b KQkq - 0 7",
+            lastMove: "c4f7",
+            arrows: ["e8->f7"],
+          },
+          // 7...Kxf7
+          {
+            fen: "r2q1bnr/ppp2kpp/3p4/4n2b/4P3/2N4P/PPPP1PP1/R1BQK2R w KQ - 0 8",
+            lastMove: "e8f7",
+            arrows: ["d1->f3"],
+          },
+          // 8.Qf3+
+          {
+            fen: "r2q1bnr/ppp2kpp/3p4/4n2b/4P3/2N2Q1P/PPPP1PP1/R1B1K2R b KQ - 1 8",
+            lastMove: "d1f3",
+            arrows: ["h5->f3"],
+          },
+          // 8...Bxf3
+          {
+            fen: "r2q1bnr/ppp2kpp/3p4/4n3/4P3/2N2b1P/PPPP1PP1/R1B1K2R w KQ - 0 9",
+            lastMove: "h5f3",
+            arrows: [],
+          },
+        ],
+      },
+      scripts: [],
     },
   },
   {
@@ -307,8 +419,8 @@ export const presentationScenes: PresentationScene[] = [
       title: "Difficulty Dial",
       badge: "Scene 2",
       kicker: "You are driving budget, not flipping slides",
-      durationMs: 7200,
-      takeaway: "Dial = budget profile (depth, nodes, time). Turning it changes how hard the AI thinks.",
+      durationMs: 14400,
+      takeaway: "Dial = budget profile. Higher budget = deeper search = stronger play.",
       voiceoverHint: "When I turn this dial, I'm reallocating compute.",
       thesisCue: {
         mode: "punch",
@@ -319,104 +431,257 @@ export const presentationScenes: PresentationScene[] = [
         durationMs: 2000,
         chapterTag: "Dial",
       },
-      beats: [
-        { t: 0.0, label: "Title" },
-        { t: 0.25, label: "Dial sweep", snap: true },
-        { t: 0.5, label: "Budgets" },
-        { t: 0.8, label: "Takeaway" },
-      ],
+      beats: DIAL_BEATS,
     },
     payload: {
-      dialLabel: "Budget per move",
-      levels: [
-        { id: "L1", depth: 4, nodes: 22000, timeMs: 120, persona: "Impulsive — plays for immediate reward.", dialAngle: -18 },
-        { id: "L2", depth: 6, nodes: 68000, timeMs: 260, persona: "Planner — short look-ahead, stable.", dialAngle: 32 },
-        { id: "L3", depth: 8, nodes: 145000, timeMs: 520, persona: "Tactician — prunes smarter, steadier.", dialAngle: 84 },
-        { id: "ULT", depth: 10, nodes: 310000, timeMs: 900, persona: "Ultimate — refined eval, controlled risk.", dialAngle: 128 },
+      definitionLines: [
+        "Budget (cost) = time/move + nodes/move",
+        "Strength = score under the same budget"
       ],
-    },
+      profiles: [
+        { level: "L1", depthLabel: "Depth 1", avgTimeMs: 60, avgNodes: 32, persona: "Impulsive" },
+        { level: "L2", depthLabel: "Depth 2", avgTimeMs: 175, avgNodes: 1150, persona: "Planner" },
+        { level: "L3", depthLabel: "Depth 3", avgTimeMs: 700, avgNodes: 14000, persona: "Tactician" },
+        { level: "ULT", depthLabel: "Adaptive", avgTimeMs: 3000, avgNodes: 185000, persona: "Ultimate" },
+      ],
+      bridgeLine: "Same board, different choice because budget changes visibility.",
+      nextLine: "Next: not only how much budget, but how to spend it.",
+      dialLabel: "Budget per move",
+      levels: [] 
+    }
   },
   {
     id: SceneId.Knobs,
     meta: {
-      title: "Four Knobs Console",
+      title: "The Knobs",
       badge: "Scene 3",
       durationMs: 7200,
-      takeaway: "Budget ladders use more than depth: horizon, efficiency, evaluation richness, controlled randomness.",
-      voiceoverHint: "Higher levels are smarter per unit budget.",
+      takeaway: "Difficulty is not just budget size, but allocation strategy.",
+      voiceoverHint: "Introduce the four dimensions, then show how they scale.",
       thesisCue: {
         mode: "echo",
         chapterTag: "Knobs",
-        headline: MAIN_THESIS,
-        subline: "Four knobs drive the ladder",
+        headline: "THE KNOBS",
+        subline: "How the budget is spent",
       },
       beats: [
-        { t: 0.0, label: "Knob 1" },
-        { t: 0.33, label: "Knob 2" },
-        { t: 0.66, label: "Knob 3" },
-        { t: 0.9, label: "Knob 4" },
+        { t: 0.0, label: "Intro" },
+        { t: 0.15, label: "Horizon" },
+        { t: 0.25, label: "Efficiency" },
+        { t: 0.35, label: "Eval Richness" },
+        { t: 0.45, label: "Randomness" },
+        { t: 0.55, label: "Levels" },
+        { t: 0.75, label: "Fixed Budget A" },
+        { t: 0.82, label: "Fixed Budget B" },
+        { t: 0.9, label: "Bridge" },
       ],
     },
     payload: {
-      knobs: [
-        { level: "L1", horizon: 38, efficiency: 32, evalRichness: 30, randomness: 62 },
-        { level: "L2", horizon: 58, efficiency: 55, evalRichness: 52, randomness: 48 },
-        { level: "L3", horizon: 76, efficiency: 74, evalRichness: 70, randomness: 34 },
-        { level: "ULT", horizon: 90, efficiency: 88, evalRichness: 92, randomness: 22 },
+      headline: "THE KNOBS",
+      subline: "How the budget is spent",
+      claim: "Difficulty = Budget × Allocation",
+      knobDefs: [
+        {
+          key: "horizon",
+          label: "Horizon",
+          oneLiner: "How far ahead we look (ply depth).",
+          captionLow: "Moves-in-hand only",
+          captionHigh: "Deep, multi-branch vision",
+        },
+        {
+          key: "efficiency",
+          label: "Efficiency",
+          oneLiner: "Ordering + pruning quality per node.",
+          captionLow: "Burns time on junk",
+          captionHigh: "Orders, prunes, saves time",
+        },
+        {
+          key: "evalRichness",
+          label: "Eval Richness",
+          oneLiner: "Nuance of evaluation (features, patterns).",
+          captionLow: "Material-only heuristics",
+          captionHigh: "Structure, initiative, king safety",
+        },
+        {
+          key: "randomness",
+          label: "Randomness",
+          oneLiner: "Noise injection to simulate error.",
+          captionLow: "Chaotic / blunders",
+          captionHigh: "Precise / stable",
+        },
       ],
+      levels: [
+        {
+          id: "L1",
+          persona: "Impulsive / Bullet",
+          note: "Looks 1-2 ply, grabs loose material, high blunder rate.",
+          values: { horizon: 25, efficiency: 28, evalRichness: 22, randomness: 78 },
+        },
+        {
+          id: "L2",
+          persona: "Club Grinder",
+          note: "Solid shape, modest depth, still wastes time on side branches.",
+          values: { horizon: 55, efficiency: 60, evalRichness: 58, randomness: 42 },
+        },
+        {
+          id: "L3",
+          persona: "Tournament Tactician",
+          note: "Sees forcing lines, good move ordering, fewer random drops.",
+          values: { horizon: 75, efficiency: 82, evalRichness: 80, randomness: 28 },
+        },
+        {
+          id: "ULT",
+          persona: "Ultimate / Production",
+          note: "Max depth + rich eval, disciplined randomness for stability.",
+          values: { horizon: 92, efficiency: 95, evalRichness: 96, randomness: 12 },
+        },
+      ],
+      fixedBudgetDemo: {
+        label: "Budget fixed: 2000ms/move",
+        a: {
+          name: "Inefficient Alloc.",
+          values: { horizon: 32, efficiency: 42, evalRichness: 40, randomness: 60 },
+          caption: "Wastes time on junk branches; misses quiet moves.",
+        },
+        b: {
+          name: "Smart Alloc.",
+          values: { horizon: 32, efficiency: 88, evalRichness: 86, randomness: 60 },
+          caption: "Same time, better ordering + richer eval → stronger move.",
+        },
+      },
+      bridgeLine: "Next: See this efficiency in action with X-Ray.",
     },
   },
   {
     id: SceneId.Ladder,
     meta: {
-      title: "Levels as Characters",
+      title: "Difficulty Ladder",
       badge: "Scene 4",
-      durationMs: 7600,
+      durationMs: 10000,
       takeaway: "Four personas on a budget ladder — each with a signature blunder or strength.",
       voiceoverHint: "One line per level; avoid algorithm jargon.",
       thesisCue: {
         mode: "echo",
         chapterTag: "Ladder",
-        headline: MAIN_THESIS,
-        subline: "Levels as characters",
+        headline: "DIFFICULTY LADDER",
+        subline: "What each level feels like",
       },
       beats: [
-        { t: 0.0, label: "L1" },
-        { t: 0.25, label: "L2" },
-        { t: 0.5, label: "L3" },
-        { t: 0.75, label: "ULT" },
+        { t: 0.0, label: "Intro" },
+        { t: 0.16, label: "L1" },
+        { t: 0.33, label: "L2" },
+        { t: 0.50, label: "L3" },
+        { t: 0.66, label: "ULT" },
+        { t: 0.83, label: "Summary" },
       ],
     },
     payload: {
-      cards: [
+      headline: "DIFFICULTY LADDER",
+      subline: "What each level feels like",
+      thesisLine: "Same engine, different behavior profiles.",
+      bridgeLine: "Next: X-Ray — how pruning and PV stability change across levels.",
+      mappingLines: [
+        "Horizon ↑ → fewer tactical misses",
+        "Efficiency ↑ → more cutoffs, deeper within same budget",
+        "Eval richness ↑ → better positional judgement",
+        "Randomness ↑ → more variety, lower strength",
+      ],
+      layout: {
+        spineStart: { x: 0.10, y: 0.22 },
+        spineEnd: { x: 0.90, y: 0.08 },
+        tValues: [0.05, 0.35, 0.65, 0.95],
+        cardOffsetN: 0.12,
+        cardOffsetT: 0.0,
+      },
+      rungs: [
         {
-          level: "L1",
-          fen: "r1bqk2r/pppp1ppp/2n2n2/8/2BPP3/5N2/PP1N1PPP/R2QK2R b KQkq - 0 8",
-          move: "...Nxe4",
-          tag: "Impulsive",
-          blurb: "Snaps a pawn, ignores latent tactics.",
+          id: "L1",
+          cardTitle: "L1 — Greedy (1-ply)",
+          feels: "Impulsive beginner",
+          signature: "wins material, misses tactics",
+          chips: ["positional-eval", "tactically blind"],
+          stats: { rating: 1.8, humanWinRate: 65 },
+          detail: {
+            config: [
+              "Search: Greedy (1-ply, no tree)",
+              "Pruning: No | ID: No | Quiescence: No",
+              "Eval: Full positional (PST + mobility + king safety)",
+              "Move choice: Deterministic",
+              "Time budget: ~instant"
+            ],
+            why: [
+              "Strong positional taste but tactically blind (no lookahead).",
+              "Vulnerable to forks/pins/mate threats (horizon effect)."
+            ],
+            human: "Rating 1.8 | Human win 65%"
+          }
         },
         {
-          level: "L2",
-          fen: "rnbq1rk1/p3bpp1/1p3n1p/2pp4/3P3B/2NBPN2/PP3PPP/R2QK2R w KQ - 0 10",
-          move: "O-O",
-          tag: "Planner",
-          blurb: "Secures king, keeps structure intact.",
+          id: "L2",
+          cardTitle: "L2 — Basic Minimax (d=3)",
+          feels: "Careful novice",
+          signature: "fewer blunders, still shallow",
+          chips: ["αβ pruning", "random top-3"],
+          stats: { rating: 2.4, humanWinRate: 45 },
+          detail: {
+            config: [
+              "Search: Minimax (d=3)",
+              "Pruning: Alpha-beta | ID: No | Quiescence: No",
+              "Eval: Material-only",
+              "Move choice: Random tie-break among top 3",
+              "Time budget: low (fast)"
+            ],
+            why: [
+              "Strength jump mainly comes from 3-ply lookahead, not eval richness.",
+              "Random tie-break keeps it beatable and less repetitive."
+            ],
+            human: "Rating 2.4 | Human win 45%"
+          }
         },
         {
-          level: "L3",
-          fen: "rn1qkb1r/1p3ppp/p2pbn2/4p3/4P3/1NN1BP2/PPP3PP/R2QKB1R b KQkq - 0 8",
-          move: "...h5",
-          tag: "Tactician",
-          blurb: "Grabs space only when eval supports it.",
+          id: "L3",
+          cardTitle: "L3 — Advanced Minimax (ID≤6)",
+          feels: "Club player",
+          signature: "sees threats & tactics",
+          chips: ["quiescence", "rich eval"],
+          stats: { rating: 3.1, humanWinRate: 35 },
+          detail: {
+            config: [
+              "Search: Alpha-beta + iterative deepening (up to d=6)",
+              "Pruning: Yes + move ordering | Quiescence: Yes",
+              "Eval: Rich positional (PST + mobility + pawn structure + king safety)",
+              "Move choice: Deterministic",
+              "Time budget: 0.6s/move"
+            ],
+            why: [
+              "Quiescence reduces horizon effect in tactical sequences.",
+              "Richer eval helps avoid simple traps that plague lower levels."
+            ],
+            human: "Rating 3.1 | Human win 35%"
+          }
         },
         {
-          level: "ULT",
-          fen: "r1b2rk1/ppppnppp/2n2q2/2b5/2BNP3/2P1B3/PP3PPP/RN1QK2R w KQ - 3 8",
-          move: "Nxc6",
-          tag: "Refined",
-          blurb: "Simplifies at the right moment to keep edge.",
-        },
+          id: "ULT",
+          cardTitle: "ULT — PeSTO (ID≤8)",
+          feels: "Stable player",
+          signature: "consistent PV, converts",
+          chips: ["PeSTO tapered", "low noise"],
+          stats: { rating: 3.6, humanWinRate: 33 },
+          detail: {
+            config: [
+              "Search: Alpha-beta + iterative deepening (up to d=8)",
+              "Pruning: Yes + ordering | Quiescence: Yes (enhanced)",
+              "Eval: PeSTO tapered (phase-adaptive MG/EG interpolation)",
+              "Move choice: Deterministic",
+              "Time budget: 1.2s/move"
+            ],
+            why: [
+              "Phase-adaptive evaluation captures positional nuance across game phases.",
+              "More consistent PV and fewer 'weird' moves (lower noise)."
+            ],
+            human: "Rating 3.6 | Human win 33%"
+          }
+        }
       ],
     },
   },
@@ -425,7 +690,7 @@ export const presentationScenes: PresentationScene[] = [
     meta: {
       title: "Search X-Ray",
       badge: "Scene 5",
-      durationMs: 8200,
+      durationMs: 16400,
       takeaway: "Visualise what the budget buys: better ordering, hotter squares, pruned cold branches.",
       voiceoverHint: "PV emerges while bad branches fade.",
       thesisCue: {
@@ -435,86 +700,106 @@ export const presentationScenes: PresentationScene[] = [
         subline: "Budget → better ordering",
       },
       beats: [
-        { t: 0.0, label: "Frame 1" },
-        { t: 0.2, label: "Frame 2" },
-        { t: 0.4, label: "Frame 3" },
-        { t: 0.6, label: "Frame 4" },
-        { t: 0.8, label: "Frame 5" },
+        { t: 0.0, label: "Intro" },
+        { t: 0.2, label: "PV" },
+        { t: 0.4, label: "Pruning" },
+        { t: 0.6, label: "Horizon" },
+        { t: 0.8, label: "Quiescence" },
+        { t: 1.0, label: "Compare" },
       ],
     },
     payload: {
-      frames: [
-        {
-          fen: "rnbq1rk1/p3bpp1/1p3n1p/2pp4/3P3B/2NBPN2/PP3PPP/R2QK2R w KQ - 0 10",
-          pv: ["Bh7+", "Kxh7", "Ng5+"],
-          prunedRatio: 0.22,
-          heatSquares: ["h7", "g6", "e6", "d5"],
+      headline: "SEARCH X-RAY",
+      subline: "What changes inside the search tree",
+      baseFen: "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      levels: {
+        L1: {
+          pvUci: ["e2e4"],
+          metrics: { depthLabel: "1-ply (greedy)", timeMs: 5, nodes: 40, cutoffs: 0, prunedRatio: 0.0, quiescence: false },
+          treeSpec: { seed: 1, branching: [6], pvIndices: [2], prunedRatio: 0.0, showQExtension: false }
         },
-        {
-          fen: "rn1qkb1r/1p3ppp/p2pbn2/4p3/4P3/1NN1BP2/PPP3PP/R2QKB1R b KQkq - 0 8",
-          pv: ["...h5", "Qd2", "...Be7"],
-          prunedRatio: 0.35,
-          heatSquares: ["h5", "d2", "e6", "f4", "g4"],
+        L2: {
+          pvUci: ["d2d4", "d7d5", "c2c4"],
+          metrics: { depthLabel: "d=3 (αβ)", timeMs: 80, nodes: 15000, cutoffs: 6000, prunedRatio: 0.65, quiescence: false },
+          treeSpec: { seed: 2, branching: [6, 3, 2], pvIndices: [2, 1, 0], prunedRatio: 0.65, showQExtension: false }
         },
-        {
-          fen: "r1b2rk1/ppppnppp/2n2q2/2b5/2BNP3/2P1B3/PP3PPP/RN1QK2R w KQ - 3 8",
-          pv: ["Nxc6", "...Bxe3", "fxe3"],
-          prunedRatio: 0.46,
-          heatSquares: ["c6", "e3", "f2", "g2"],
+        L3: {
+          pvUci: ["e2e4", "e7e5", "g1f3", "b8c6", "f1c4", "g8f6"],
+          metrics: { depthLabel: "ID≤6 + Q", timeMs: 600, nodes: 250000, cutoffs: 190000, prunedRatio: 0.78, quiescence: true },
+          treeSpec: { seed: 3, branching: [6, 3, 2, 1], pvIndices: [2, 1, 0, 0], prunedRatio: 0.78, showQExtension: true }
         },
-        {
-          fen: "r1bq1rk1/ppp2pbp/2np1np1/3Pp3/2P1P3/2N2N2/PP2BPPP/R1BQ1RK1 b - - 0 8",
-          pv: ["...Nd4", "Nxd4", "exd4"],
-          prunedRatio: 0.51,
-          heatSquares: ["d4", "e4", "f3", "c2"],
-        },
-        {
-          fen: "rnbqk2r/pp2ppbp/6p1/2p5/3PP3/2P1BN2/P4PPP/R2QKB1R b KQkq - 1 8",
-          pv: ["...Qa5", "Qd2", "...Nc6"],
-          prunedRatio: 0.44,
-          heatSquares: ["a5", "d2", "c6", "d4"],
-        },
-        {
-          fen: "rn1qkb1r/pp3ppp/2p1pn2/5b2/P1BP4/2N1PN2/1P3PPP/R1BQK2R b KQkq - 0 7",
-          pv: ["...Bb4", "O-O", "...Nbd7"],
-          prunedRatio: 0.39,
-          heatSquares: ["b4", "d4", "e4", "f3"],
-        },
+        ULT: {
+          pvUci: ["e2e4", "e7e5", "g1f3", "b8c6", "f1b5", "a7a6", "b5a4"],
+          metrics: { depthLabel: "ID≤8 + Q + PeSTO", timeMs: 1200, nodes: 900000, cutoffs: 760000, prunedRatio: 0.83, quiescence: true },
+          treeSpec: { seed: 4, branching: [6, 3, 2, 1], pvIndices: [2, 1, 0, 0], prunedRatio: 0.83, showQExtension: true }
+        }
+      },
+      compareLines: [
+        "L1: Greedy (1-ply) | no pruning | no ID | no Q | positional eval | deterministic",
+        "L2: Minimax d=3 | αβ pruning | no ID | no Q | material-only | random tie-break (top-3)",
+        "L3: Minimax | αβ + ordering | ID≤6 | Q on | rich positional eval | deterministic | 0.6s/move",
+        "ULT: Minimax | αβ + ordering | ID≤8 | Q on | PeSTO tapered eval | deterministic | 1.2s/move"
       ],
+      bridgeLine: "Next: Evidence — M2M results and diminishing returns."
     },
   },
   {
-    id: SceneId.M2M,
+    id: SceneId.Pipeline,
     meta: {
-      title: "M2M Pipeline",
+      title: "Evaluation Harness",
       badge: "Scene 6",
-      durationMs: 6500,
-      takeaway: "Automation makes the ladder measurable and reproducible.",
-      voiceoverHint: "Scheduler → matches → logging → analytics → summary card.",
+      kicker: "Reproducible · Scalable · Comparable",
+      durationMs: 12000,
+      takeaway: "Scene6: You have a rigorous harness, not just random games.",
+      voiceoverHint: "Walk through the three lanes and the throughput stats.",
       liteSafe: true,
       thesisCue: {
         mode: "echo",
-        chapterTag: "Pipeline",
-        headline: MAIN_THESIS,
-        subline: "Measurable & reproducible",
+        chapterTag: "Harness",
+        headline: "EVALUATION HARNESS",
+        subline: "Reproducible · Scalable · Comparable",
       },
       beats: [
-        { t: 0.0, label: "Scheduler" },
-        { t: 0.25, label: "A vs B" },
-        { t: 0.5, label: "Logger" },
-        { t: 0.7, label: "Analytics" },
-        { t: 0.9, label: "Summary" },
+        { t: 0.0, label: "Overview" },
+        { t: 0.2, label: "M2M Standard" },
+        { t: 0.4, label: "H2M Human" },
+        { t: 0.6, label: "Time-Scaled" },
+        { t: 0.8, label: "Throughput" },
+        { t: 1.0, label: "Outputs" },
       ],
     },
     payload: {
-      nodes: [
-        { id: "sched", label: "Scheduler", blurb: "Queues matches, rotates colors, enforces limits." },
-        { id: "play", label: "A vs B", blurb: "Engines run with fixed seeds + budgets." },
-        { id: "log", label: "Logger", blurb: "Stores FENs, move times, nodes, eval traces." },
-        { id: "analytics", label: "Analytics", blurb: "Aggregates win rates, elo deltas, blunder rates." },
-        { id: "results", label: "Results", blurb: "Printable summary cards for the deck/demo." },
+      headline: "EVALUATION HARNESS",
+      subline: "Reproducible · Scalable · Comparable",
+      thesisLine: "Not just games — a reproducible harness.",
+      trunkNodes: ["Config", "Queue (Batch)", "Workers (≤20)", "GameRunner", "Logger", "Aggregator", "Figures"],
+      lanes: [
+        {
+          id: "m2m_standard",
+          title: "M2M Standard",
+          bullets: ["100 games per pairing", "50/50 colors", "default time limit per engine"],
+          tags: ["Round-robin style"],
+        },
+        {
+          id: "h2m_human",
+          title: "H2M Human Study",
+          bullets: ["10 participants", "5 games per level (colors alternated)", "5-point difficulty rating + feedback", "Participants → SakuraFRP → Same server"],
+        },
+        {
+          id: "m2m_timescaled",
+          title: "M2M Time-Scaled",
+          bullets: ["0.1s/move + 0.2s steps (0.1, 0.3, 0.5, …)", "50 games per pairing per time setting"],
+          tags: ["Cost–strength curve"],
+        },
       ],
-      summaryCard: { matches: 128, winrate: 62, notes: "ULT vs L3, swap colors, 12-move cap, deterministic seeds." },
+      rulesCard: ["Max 500 plies", "Scoring: 1 / 0.5 / 0", "Colors reversed"],
+      throughputCard: ["≤20 concurrent workers", "One batch active at a time", "Batch: queued → running → done"],
+      outputs: [
+        { id: "score", label: "Score% (colors reversed)" },
+        { id: "tradeoff", label: "Cost–strength trade-off" },
+        { id: "gamestats", label: "Game stats (plies, nodes/move)" },
+      ],
+      bridgeLine: "Next: Evidence — M2M results and diminishing returns.",
     },
   },
   {
@@ -536,9 +821,11 @@ export const presentationScenes: PresentationScene[] = [
       },
       beats: [
         { t: 0.0, label: "Matrix" },
-        { t: 0.4, label: "Highlight" },
-        { t: 0.7, label: "Tradeoff" },
-        { t: 0.9, label: "Takeaway" },
+        { t: 0.2, label: "Highlight" },
+        { t: 0.4, label: "Tradeoff" },
+        { t: 0.6, label: "Takeaway" },
+        { t: 0.8, label: "TSB" },
+        { t: 0.95, label: "Human Check" }, // Beat 5
       ],
     },
     payload: {
@@ -555,148 +842,160 @@ export const presentationScenes: PresentationScene[] = [
         { level: "ULT", cost: 5, strength: 1880 },
       ],
       heightmap: [0.1, 0.2, 0.4, 0.5, 0.32, 0.28, 0.6, 0.7, 0.38, 0.25, 0.46, 0.78, 0.64, 0.58, 0.82, 1],
+      tsb: {
+        title: "Time-Scaled Benchmark (TSB)",
+        defaultIndex: 1,
+        hint: "T toggle · [ ] switch · Enter zoom",
+        showFromBeat: 4,
+        figures: [
+          {
+            id: "l2_l1",
+            label: "L2 vs L1",
+            src: imgL2vsL1,
+            takeaway: "Big early gain, saturates"
+          },
+          {
+            id: "l3_l2",
+            label: "L3 vs L2",
+            src: imgL3vsL2,
+            takeaway: "More cost, smaller gain"
+          },
+          {
+            id: "ult_l3",
+            label: "ULT vs L3",
+            src: imgUltvsL3,
+            takeaway: "Stable but marginal"
+          },
+          {
+            id: "ult_l1",
+            label: "ULT vs L1",
+            src: imgUltvsL1,
+            takeaway: "Ultimate dominance"
+          },
+          {
+            id: "l3_l1",
+            label: "L3 vs L1",
+            src: imgL3vsL1,
+            takeaway: "Gap holds across budgets"
+          }
+        ]
+      }
     },
   },
   {
-    id: SceneId.Audience,
+    id: SceneId.FutureLite,
     meta: {
-      title: "Audience Challenge",
+      title: "Future Work",
       badge: "Scene 8",
-      durationMs: 7600,
-      takeaway: "Let the room pick a move; you reveal cached verdicts and a proof line.",
-      voiceoverHint: "Ask the room for A/B/C, then play the scripted fallout.",
+      durationMs: 8200,
+      takeaway: "Paper-backed roadmap: faster search, adaptive difficulty, broader games.",
+      voiceoverHint: "Hit optimization, dynamic difficulty, then generalization; badge learned eval on the last beat.",
+      liteSafe: true,
       thesisCue: {
         mode: "echo",
-        chapterTag: "Audience",
-        headline: MAIN_THESIS,
-        subline: "Difficulty you can feel",
-      },
-    },
-    payload: {
-      fen: "r1bqk2r/pppp1ppp/2n2n2/8/2BPP3/5N2/PP1N1PPP/R2QK2R b KQkq - 0 8",
-      branches: [
-        {
-          id: "a",
-          label: "...Nxe4",
-          moves: ["...Nxe4", "Nxe4", "...d5"],
-          verdict: "Grabs a pawn, invites tactics.",
-          tag: "risky",
-          perLevelEvals: [
-            { level: "L1", eval: "+0.9" },
-            { level: "L2", eval: "+0.5" },
-            { level: "L3", eval: "+0.2" },
-            { level: "ULT", eval: "+0.1" },
-          ],
-        },
-        {
-          id: "b",
-          label: "...d6",
-          moves: ["...d6", "O-O", "...Be7"],
-          verdict: "Stable, keeps tension and controls e5.",
-          tag: "solid",
-          perLevelEvals: [
-            { level: "L1", eval: "+0.4" },
-            { level: "L2", eval: "+0.2" },
-            { level: "L3", eval: "+0.1" },
-            { level: "ULT", eval: "+0.05" },
-          ],
-        },
-        {
-          id: "c",
-          label: "...a6",
-          moves: ["...a6", "Bd3", "...d6"],
-          verdict: "Kicks the bishop but slows development.",
-          tag: "cautious",
-          perLevelEvals: [
-            { level: "L1", eval: "+0.3" },
-            { level: "L2", eval: "+0.15" },
-            { level: "L3", eval: "+0.1" },
-            { level: "ULT", eval: "0.0" },
-          ],
-        },
-      ],
-    },
-  },
-  {
-    id: SceneId.Future,
-    meta: {
-      title: "Future: Humanlike + ELO",
-      badge: "Scene 9",
-      durationMs: 7200,
-      takeaway: "Dynamic ELO scaling + style sliders for humanlike mistakes.",
-      voiceoverHint: "Show curve morph + style controls.",
-      liteSafe: true,
-      thesisCue: {
-        mode: "punch",
-        headline: "Dynamic, humanlike budget",
-        subline: "ELO-based scaling + style sliders",
-        emphasize: ["humanlike"],
-        effect: "stamp",
-        durationMs: 2000,
         chapterTag: "Future",
+        headline: "FUTURE WORK",
+        subline: "All items are stated in the paper.",
       },
       beats: [
-        { t: 0.0, label: "Fixed curve" },
-        { t: 0.5, label: "Dynamic curve" },
-        { t: 0.8, label: "Style sliders" },
+        { t: 0.0, label: "Overview" },
+        { t: 0.33, label: "Optimization" },
+        { t: 0.66, label: "Dynamic difficulty" },
+        { t: 1.0, label: "Generalization" },
       ],
     },
     payload: {
-      eloCurveFixed: [
-        { x: 0, y: 1200 },
-        { x: 1, y: 1400 },
-        { x: 2, y: 1650 },
-        { x: 3, y: 1880 },
+      headline: "FUTURE WORK",
+      subline: "All items are stated in the paper.",
+      cards: [
+        {
+          id: "opt",
+          title: "Performance optimization",
+          bullets: [
+            "Transposition table: larger size + smarter replacement schemes",
+            "Parallel search: better multi-core utilization",
+            "Port critical parts to C++/Rust for deeper search under the same time limit",
+          ],
+        },
+        {
+          id: "dda",
+          title: "Dynamic difficulty adjustment",
+          bullets: [
+            "Based on recent outcomes",
+            "Adjust search depth",
+            "Adjust evaluation aggressiveness",
+          ],
+        },
+        {
+          id: "gen",
+          title: "Generalization to other games",
+          bullets: [
+            "Extend to other board games: checkers, Go, shogi",
+            "Reuse the modular architecture",
+            "Swap evaluation functions and move generators",
+          ],
+        },
       ],
-      eloCurveDynamic: [
-        { x: 0, y: 1200 },
-        { x: 1, y: 1500 },
-        { x: 2, y: 1780 },
-        { x: 3, y: 2050 },
-      ],
-      styleCard: {
-        sliders: [
-          { label: "Material bias", value: 62 },
-          { label: "Risk appetite", value: 34 },
-          { label: "Blunder frequency", value: 18 },
-          { label: "Time scrambles", value: 48 },
+      impact: {
+        title: "Impact",
+        rows: [
+          {
+            id: "opt",
+            goal: "Stronger play under the same budget",
+            change: "TT + parallelism + faster core",
+            why: "Deeper / more stable search within time constraints",
+          },
+          {
+            id: "dda",
+            goal: "Smoother and personalized difficulty",
+            change: "Tune depth + eval aggressiveness",
+            why: "Avoid abrupt jumps; better user experience",
+          },
+          {
+            id: "gen",
+            goal: "Prove the framework generalizes",
+            change: "Replace eval + move rules",
+            why: "Validate the scalability beyond chess",
+          },
         ],
-        notes: [
-          "Weak play should look human: overvalue material, miss long tactics.",
-          "Dynamic scaling ties budget to opponent rating / clock.",
-          "Style slider keeps low levels fun instead of random.",
-        ],
+        badge: "Explore learned evaluation functions (Conclusion)",
       },
+      punch: "Future work: faster search, adaptive difficulty, broader games.",
+      bridge: "Next: live demo",
     },
   },
   {
-    id: SceneId.Handoff,
+    id: SceneId.Closing,
     meta: {
-      title: "Seamless Handoff",
-      badge: "Scene 10",
-      durationMs: 5000,
-      takeaway: "Morph into the live app; space triggers /play route.",
-      voiceoverHint: "Say the line, then hand off.",
+      title: "Closing & Handoff",
+      badge: "Scene 9",
+      durationMs: 5200,
+      takeaway: "Restate the thesis, recap the evidence, and hand off to the live demo.",
+      voiceoverHint: "Land the thesis, hit the three recap bullets, and invite Space to open /play.",
       liteSafe: true,
       thesisCue: {
         mode: "punch",
-        headline: "Now run it live",
-        subline: MAIN_THESIS,
-        emphasize: ["live"],
-        effect: "stamp",
-        durationMs: 1800,
-        chapterTag: "Handoff",
+        headline: "DIFFICULTY = COMPUTATION BUDGET",
+        subline: "Thank you",
+        emphasize: ["DIFFICULTY", "BUDGET"],
+        effect: "glow",
+        chapterTag: "Closing",
       },
       beats: [
-        { t: 0.0, label: "Frame" },
-        { t: 0.5, label: "Shrink" },
-        { t: 0.8, label: "CTA" },
-        { t: 1.0, label: "Jump" },
+        { t: 0.0, label: "Hero" },
+        { t: 1.0, label: "CTA" },
       ],
     },
     payload: {
-      ctaText: "That's the system. Now let's run it live.",
-      route: "/play",
+      headline: "THANK YOU",
+      hero: "DIFFICULTY = COMPUTATION BUDGET",
+      recap: [
+        "Built a multi-level chess AI ladder (L1–L3 + Ultimate)",
+        "Designed a reproducible evaluation harness (M2M/H2M/TSB)",
+        "Verified separation and diminishing returns in results",
+      ],
+      cta: "Press Space to open live demo → /play",
+      footnote: "Q&A",
     },
   },
 ];

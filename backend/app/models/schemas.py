@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from enum import Enum
-from typing import Dict, List, Optional
+from typing import Any, Dict, List, Optional
 
 from pydantic import BaseModel, Field
 
@@ -189,3 +189,27 @@ class PagedTests(BaseModel):
     page: int
     page_size: int
     total: int
+
+
+class TrainingConfig(BaseModel):
+    games: int = Field(10000, ge=1, le=100000, description="Number of self-play games to generate")
+    max_moves: int = Field(120, ge=10, le=500)
+    time_limit: float = Field(0.7, ge=0.1, le=10.0, description="Per-move time limit during data generation")
+    epochs: int = Field(6, ge=1, le=50)
+    batch_size: int = Field(32, ge=8, le=256)
+    lr: float = Field(1e-3, ge=1e-5, le=1e-1, description="Learning rate")
+    load_checkpoint: Optional[str] = Field(None, description="Path to existing checkpoint to load")
+    use_cnn: bool = Field(False, description="Use CNN model for self-play generation (requires load_checkpoint)")
+    simulations: int = Field(200, ge=50, le=1000, description="MCTS simulations per move")
+    workers: Optional[int] = Field(None, ge=1, le=32, description="Number of parallel workers for self-play generation (optional)")
+
+
+class TrainingStatus(BaseModel):
+    training_id: str
+    status: str  # "queued", "running", "completed", "failed", "cancelled"
+    config: TrainingConfig
+    progress: Dict[str, Any] = Field(default_factory=dict)  # games_completed, samples_generated, epochs_done, etc.
+    started_at: Optional[str] = None
+    completed_at: Optional[str] = None
+    error: Optional[str] = None
+    checkpoint_path: Optional[str] = None

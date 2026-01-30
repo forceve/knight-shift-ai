@@ -1,0 +1,157 @@
+% !TeX program = xelatex
+\documentclass[12pt]{article}
+\usepackage[a4paper,margin=1in]{geometry}
+\usepackage{hyperref}
+\usepackage{enumitem}
+\usepackage{fontspec}
+\setmainfont{TeX Gyre Termes}
+
+\title{\textbf{Night Shift AI Studio — Optimized Full Talk Script (English)}}
+\author{Grey}
+\date{}
+
+\begin{document}
+\maketitle
+
+\section*{Scene0 — Title / Claim (0:00--0:20)}
+Good morning everyone. My project is \textbf{Night Shift}. \\
+The key idea is simple: \textbf{Difficulty equals computation budget}. \\
+If you give the engine more budget, it sees further, becomes more stable, and avoids traps.
+
+\medskip
+(One-line optional pun, only if it lands:) \\
+I call it \textit{Night Shift} because it’s built with \textit{knights} --- and I built it mostly at night.
+
+\section*{Scene1 — Freeze: Same board, different choice (0:20--1:20)}
+Let’s start with a quick question.
+
+\medskip
+Here is a position: \textbf{same board, same side to move}. \\
+The opponent’s queen is \textbf{hanging}. \\
+\textbf{Would you take the queen?}
+
+\medskip
+(\textit{Pause 2 seconds.})
+
+\medskip
+Now watch what two levels do with different budgets. \\
+On the \textbf{left}, the low-budget level grabs it immediately --- it \textit{looks} great. \\
+But a few moves later, it walks into a tactical trap and gets punished. \\
+On the \textbf{right}, the higher-budget level plays a different move. \\
+It sees the trap first, and it chooses the safer line.
+
+\medskip
+This difference is exactly what I mean by \textbf{controllable difficulty}: \\
+\textbf{same position, different behavior} --- because the budget is different.
+
+\section*{Scene2 — Difficulty Dial: four levels as budget presets (1:20--2:05)}
+So how did I implement ``difficulty''?
+
+\medskip
+I built \textbf{four levels} by increasing computation budget and heuristic precision step by step.
+These levels are not just names --- they are \textbf{budget presets}.
+
+\begin{itemize}[leftmargin=1.2em]
+\item \textbf{Level 1: Greedy (1-ply).} Fast, but short-sighted. It chooses the best move after a one-step lookahead.
+\item \textbf{Level 2: Minimax + Alpha-Beta, depth 3.} Uses a simplified \textit{material-only} evaluation, and adds a small randomness tie-break among the top moves.
+\item \textbf{Level 3: Practical engine.} Alpha-beta plus \textbf{quiescence search} and a \textbf{transposition table} to cache explored positions. It is time-limited at \textbf{0.6 seconds per move}.
+\item \textbf{Ultimate.} Same structure as Level 3, but with a stronger, well-established evaluation function (\textbf{PeSTO}) and a larger budget: \textbf{1.2 seconds per move}.
+\end{itemize}
+
+\section*{Scene3 — Knobs: why budget changes behavior (2:05--3:05)}
+To make this explainable, I summarize difficulty into four knobs:
+
+\begin{enumerate}[leftmargin=1.4em]
+\item \textbf{Horizon}: how far the engine can see (depth / iterative deepening).
+\item \textbf{Efficiency}: how many useless branches it can avoid (alpha-beta, move ordering, transposition table).
+\item \textbf{Evaluation richness}: how well it can score a position (material-only $\rightarrow$ positional $\rightarrow$ PeSTO).
+\item \textbf{Randomness}: controlled noise so low levels feel less ``perfect'' and more human.
+\end{enumerate}
+
+And the key point is: \textbf{levels are just presets of these knobs}. \\
+So difficulty becomes \textbf{controllable}, \textbf{repeatable}, and \textbf{explainable}.
+
+\section*{Scene4 — Ladder: the behavior staircase (3:05--3:45)}
+You can think of the four levels as a ladder:
+
+\begin{itemize}[leftmargin=1.2em]
+\item L1 is fast and impulsive.
+\item L2 can see simple tactics, but misses deeper threats.
+\item L3 is a practical engine: deeper search, calmer decisions.
+\item Ultimate is similar to L3, but stronger evaluation and more time --- so it converts advantages more reliably.
+\end{itemize}
+
+So the ladder is not just ``stronger''. \\
+It is \textbf{more stable}, and it gets trapped less often.
+
+\section*{Scene5 — Search X-Ray: internal mechanism (3:45--5:05)}
+Now, what changes \textit{inside} when budget increases?
+
+\medskip
+First, the engine follows a \textbf{principal variation} --- the current best line it believes in. \\
+Then, with \textbf{alpha-beta pruning}, many branches become irrelevant and are cut away. \\
+With \textbf{iterative deepening}, it searches depth 1, then 2, then 3, and so on, always keeping the best move found so far. \\
+And the key upgrade is \textbf{quiescence search}: it extends noisy tactical positions, so it reduces the horizon effect.
+
+\medskip
+So, budget is not just ``waiting longer''. \\
+Budget changes the \textbf{shape of the search tree}, which changes decisions.
+
+\section*{Scene6 — Evaluation Harness: fair, reproducible, scalable (5:05--6:05)}
+To prove the levels really separate, I built an evaluation pipeline.
+
+\medskip
+Everything is standardized:
+\begin{itemize}[leftmargin=1.2em]
+\item \textbf{Same rules}, same scoring: win $=1$, draw $=0.5$, loss $=0$.
+\item \textbf{Colors reversed} to remove first-move bias.
+\item A max of \textbf{500 plies} to avoid endless games.
+\end{itemize}
+
+And I used three protocols:
+\begin{itemize}[leftmargin=1.2em]
+\item \textbf{M2M standard}: 100 games per pairing (50/50 colors).
+\item \textbf{H2M}: 10 participants, 5 games per level, with rating and feedback.
+\item \textbf{Time-scaled}: from 0.1s/move, step by +0.2s, and test each budget with enough games.
+\end{itemize}
+
+This makes the results comparable and reproducible.
+
+\section*{Scene7 — Evidence Wall + TSB strip (6:05--8:20)}
+Now the evidence.
+
+\medskip
+On the left is the round-robin scoreboard. The key pattern is clear: \\
+\textbf{levels separate in strength}. For example, \textbf{L2 vs L1 reaches 0.85 score rate}, and \textbf{L3 vs L2 reaches 0.75}. \\
+So the ladder is real.
+
+\medskip
+On the right is the cost--strength curve. This is the second takeaway: \\
+\textbf{diminishing returns}. Beyond a certain budget, strength keeps improving, but each extra millisecond gives less gain.
+
+\medskip
+Finally, at the bottom, the \textbf{TSB film-strip} shows the same trend stays stable across different time budgets. \\
+So the conclusion is robust: \textbf{budget controls difficulty, consistently}.
+
+\section*{Scene8 — Future Work (8:20--9:00)}
+Future work has three clear directions:
+\begin{itemize}[leftmargin=1.2em]
+\item \textbf{Performance optimization}: faster search and better throughput.
+\item \textbf{Dynamic difficulty adjustment}: adapt the budget and evaluation aggressiveness based on recent outcomes.
+\item \textbf{Generalization}: apply the same multi-level framework to other board games by swapping move generation and evaluation.
+\end{itemize}
+
+\section*{Scene9 — Closing / Handoff (9:00--9:30)}
+To close, my main claim is: \textbf{Difficulty equals computation budget}.
+
+\medskip
+I delivered three things:
+\begin{enumerate}[leftmargin=1.4em]
+\item A multi-level chess AI ladder (L1--L3 + Ultimate).
+\item A reproducible evaluation harness (M2M / H2M / time-scaled).
+\item Evidence of separation and diminishing returns.
+\end{enumerate}
+
+Thank you --- and now I can open the live demo. Any questions?
+
+\end{document}

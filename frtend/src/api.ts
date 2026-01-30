@@ -96,4 +96,20 @@ export function runTimeBenchmark(payload: { white_engine: AILevel; black_engine:
   return api<BatchTestSummary>("/m2m/time-benchmark", { method: "POST", body: JSON.stringify(payload) });
 }
 
+export function startTraining(payload: { games: number; max_moves: number; time_limit: number; epochs: number; batch_size: number; lr: number; load_checkpoint?: string | null; use_cnn: boolean; simulations: number; workers?: number | null }) {
+  return api<import("./types").TrainingStatus>("/training/start", { method: "POST", body: JSON.stringify(payload) });
+}
+
+export function getTraining(trainingId: string) {
+  return api<import("./types").TrainingStatus>(`/training/${trainingId}`);
+}
+
+export function listTrainings() {
+  return api<import("./types").TrainingStatus[]>("/training");
+}
+
+export function cancelTraining(trainingId: string) {
+  return api<import("./types").TrainingStatus>(`/training/${trainingId}/cancel`, { method: "POST" });
+}
+
 export { API_BASE };

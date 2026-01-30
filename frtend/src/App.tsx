@@ -1,10 +1,11 @@
-import { BrowserRouter, NavLink, Route, Routes, useLocation } from "react-router-dom";
+import { BrowserRouter, NavLink, Route, Routes, useLocation, Navigate } from "react-router-dom";
 import HomePage from "./pages/HomePage";
 import PlayPage from "./pages/PlayPage";
 import M2MPage from "./pages/M2MPage";
 import ReplayPage from "./pages/ReplayPage";
 import HistoryPage from "./pages/HistoryPage";
-import PresentationPage from "./pages/PresentationPage";
+import TrainingPage from "./pages/TrainingPage";
+import { PresentationLayout, SceneRoute } from "./pages/Presentation";
 
 function Shell() {
   const location = useLocation();
@@ -29,6 +30,9 @@ function Shell() {
             <NavLink to="/m2m" className={({ isActive }) => `px-3 py-2 rounded-lg ${isActive ? "bg-white/15" : "hover:bg-white/10"}`}>
               M2M & Tests
             </NavLink>
+            <NavLink to="/training" className={({ isActive }) => `px-3 py-2 rounded-lg ${isActive ? "bg-white/15" : "hover:bg-white/10"}`}>
+              Training
+            </NavLink>
             <NavLink
               to="/presentation"
               className={({ isActive }) => `px-3 py-2 rounded-lg ${isActive ? "bg-white/15" : "hover:bg-white/10"}`}
@@ -46,7 +50,11 @@ function Shell() {
           <Route path="/" element={<HomePage />} />
           <Route path="/play" element={<PlayPage />} />
           <Route path="/m2m" element={<M2MPage />} />
-          <Route path="/presentation" element={<PresentationPage />} />
+          <Route path="/training" element={<TrainingPage />} />
+          <Route path="/presentation" element={<PresentationLayout />}>
+            <Route index element={<Navigate to="scene0" replace />} />
+            <Route path=":sceneId" element={<SceneRoute />} />
+          </Route>
           <Route path="/replay/:matchId" element={<ReplayPage />} />
           <Route path="/history" element={<HistoryPage />} />
         </Routes>

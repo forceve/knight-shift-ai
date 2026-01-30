@@ -4,16 +4,15 @@ import { SceneId } from "../../data/presentation";
 // Current build also statically imports these scenes, but we keep loaders for future lazy splitting.
 export const sceneChunkLoaders: Array<() => Promise<unknown>> = [
   () => import("./scenes/AmbientScene"),
-  () => import("./scenes/FreezeScene"),
+  () => import("./scenes/Freeze/index"),
   () => import("./scenes/DialScene"),
-  () => import("./scenes/KnobsScene"),
+  () => import("./scenes/Knobs"),
   () => import("./scenes/LadderScene"),
-  () => import("./scenes/XRayScene"),
+  () => import("./scenes/XRay"),
   () => import("./scenes/PipelineScene"),
   () => import("./scenes/LandscapeScene"),
-  () => import("./scenes/AudienceScene"),
-  () => import("./scenes/FutureScene"),
-  () => import("./scenes/HandoffScene"),
+  () => import("./scenes/FutureLite/FutureLiteScene"),
+  () => import("./scenes/ClosingScene"),
 ];
 
 export const SCENE_IDS_IN_ORDER: SceneId[] = [
@@ -25,7 +24,6 @@ export const SCENE_IDS_IN_ORDER: SceneId[] = [
   SceneId.XRay,
   SceneId.Pipeline,
   SceneId.Landscape,
-  SceneId.Audience,
-  SceneId.Future,
-  SceneId.Handoff,
+  SceneId.FutureLite,
+  SceneId.Closing,
 ];

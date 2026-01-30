@@ -9,6 +9,7 @@ from app.models.schemas import (
     AILevelsResponse,
     BatchTestSummary,
     CreateGameRequest,
+    GameMode,
     HistoryEntry,
     GameState,
     HealthResponse,
@@ -22,8 +23,11 @@ from app.models.schemas import (
     ResignRequest,
     PagedMatches,
     PagedTests,
+    TrainingConfig,
+    TrainingStatus,
 )
 from app.history_store import HistoryStore
+from app.training_controller import TrainingController
 
 app = FastAPI(title="Knight Shift AI Backend", version="0.1.0")
 
@@ -38,6 +42,7 @@ app.add_middleware(
 history_store = HistoryStore()
 games = GameManager(history_store)
 m2m = M2MController(history_store)
+training = TrainingController()
 
 
 @app.get("/health", response_model=HealthResponse)
@@ -146,3 +151,38 @@ def get_test(test_id: str):
 @app.get("/history", response_model=list[HistoryEntry])
 def history():
     return history_store.list_entries()
+
+
+@app.post("/training/start", response_model=TrainingStatus)
+def start_training(config: TrainingConfig):
+    """Start a CNN training task."""
+    task = training.start_training(config)
+    return task.to_status()
+
+
+@app.get("/training/{training_id}", response_model=TrainingStatus)
+def get_training(training_id: str):
+    """Get training task status."""
+    task = training.get_training(training_id)
+    if not task:
+        raise HTTPException(status_code=404, detail="training_not_found")
+    return task.to_status()
+
+
+@app.get("/training", response_model=list[TrainingStatus])
+def list_trainings():
+    """List all training tasks."""
+    tasks = training.list_trainings()
+    return [task.to_status() for task in tasks]
+
+
+@app.post("/training/{training_id}/cancel", response_model=TrainingStatus)
+def cancel_training(training_id: str):
+    """Cancel a running training task."""
+    success = training.cancel_training(training_id)
+    if not success:
+        raise HTTPException(status_code=404, detail="training_not_found_or_not_cancellable")
+    task = training.get_training(training_id)
+    if not task:
+        raise HTTPException(status_code=404, detail="training_not_found")
+    return task.to_status()

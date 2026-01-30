@@ -1,0 +1,127 @@
+% !TeX program = xelatex
+\documentclass[12pt]{article}
+\usepackage[a4paper,margin=1in]{geometry}
+\usepackage{hyperref}
+\usepackage{enumitem}
+\usepackage{fontspec}
+\usepackage{xeCJK}
+\setmainfont{TeX Gyre Termes}
+\setCJKmainfont{Noto Serif CJK SC}
+
+\title{\textbf{Night Shift AI Studio — Optimized Full Talk Script (Bilingual CN/EN)}}
+\author{Grey}
+\date{}
+
+\begin{document}
+\maketitle
+
+\section*{Usage Note（使用方式）}
+建议你现场 \textbf{以英文为主}，每个 Scene 用一句中文做 ``punchline''（钉住主张），这样既不跳戏也更容易控时。
+
+\section*{Scene0 — Title / Claim (0:00--0:20)}
+EN: Hi everybody, good morning. My project is \textbf{Night Shift}. \\
+EN: The key idea is simple: \textbf{Difficulty = computation budget}. \\
+EN: With more budget, the engine sees further, becomes more stable, and avoids traps.
+
+\medskip
+CN（punchline）: 我今天讲的不是“更强棋力”，而是\textbf{可控难度系统}。
+
+\medskip
+EN (optional short pun): I call it \textit{Night Shift} because it’s built with \textit{knights} --- and I built it mostly at night.
+
+\section*{Scene1 — Freeze: Same board, different choice (0:20--1:20)}
+EN: Let’s start with a quick question. \\
+EN: Here is one position --- \textbf{same board, same side to move}. \\
+EN: The opponent’s queen is \textbf{hanging}. \\
+EN: \textbf{Would you take the queen?}
+
+\medskip
+(\textit{Pause 2 seconds. Look at the audience.})
+
+\medskip
+EN: Now watch what two levels do with different budgets. \\
+EN: Left: the low-budget level takes immediately --- looks great. \\
+EN: But a few moves later, it falls into a tactical trap. \\
+EN: Right: the higher-budget level plays differently --- it sees the trap first.
+
+\medskip
+CN（punchline）: 同一局面，不同选择——\textbf{因为预算不同}。
+
+\section*{Scene2 — Difficulty Dial: four levels as budget presets (1:20--2:05)}
+EN: I implemented \textbf{four difficulty levels} by increasing computation budget and heuristic precision. \\
+EN: Levels are not arbitrary names --- they are \textbf{budget presets}.
+
+\begin{itemize}[leftmargin=1.2em]
+\item EN: \textbf{L1 Greedy (1-ply)}: very fast, very short-sighted.
+\item EN: \textbf{L2 Minimax + Alpha-Beta (depth 3)}: material-only eval + small random tie-break.
+\item EN: \textbf{L3 Practical engine}: alpha-beta + \textbf{quiescence} + \textbf{transposition table}, \textbf{0.6s/move}.
+\item EN: \textbf{Ultimate}: same as L3 but stronger eval (\textbf{PeSTO}) + \textbf{1.2s/move}.
+\end{itemize}
+
+CN（punchline）: 四档不是拍脑袋，是\textbf{预算预设}。
+
+\section*{Scene3 — Knobs: why budget changes behavior (2:05--3:05)}
+EN: Difficulty is not one knob. It’s four knobs:
+\begin{enumerate}[leftmargin=1.4em]
+\item EN: \textbf{Horizon} (depth / iterative deepening)
+\item EN: \textbf{Efficiency} (alpha-beta, ordering, TT)
+\item EN: \textbf{Eval richness} (material $\rightarrow$ positional $\rightarrow$ PeSTO)
+\item EN: \textbf{Randomness} (controlled noise)
+\end{enumerate}
+
+CN（punchline）: \textbf{Levels = presets of knobs}，所以难度可控、可解释、可复现。
+
+\section*{Scene4 — Ladder: the behavior staircase (3:05--3:45)}
+EN: Think of the levels as a ladder:
+\begin{itemize}[leftmargin=1.2em]
+\item EN: L1 is fast and impulsive.
+\item EN: L2 sees simple tactics, misses deeper threats.
+\item EN: L3 is practical and stable.
+\item EN: Ultimate has stronger evaluation and more time, so it converts advantages more reliably.
+\end{itemize}
+
+CN（punchline）: 这不是强弱列表，是\textbf{行为阶梯}：越往上越稳。
+
+\section*{Scene5 — Search X-Ray: internal mechanism (3:45--5:05)}
+EN: What changes inside?
+\begin{itemize}[leftmargin=1.2em]
+\item EN: \textbf{PV} shows the best line.
+\item EN: \textbf{Alpha-beta} prunes irrelevant branches.
+\item EN: \textbf{Iterative deepening} stabilizes the best move under time limits.
+\item EN: \textbf{Quiescence} reduces horizon effect in tactical positions.
+\end{itemize}
+
+CN（punchline）: 预算不是“等更久”，而是让它\textbf{看得更远、更稳}。
+
+\section*{Scene6 — Evaluation Harness: fair, reproducible, scalable (5:05--6:05)}
+EN: To validate the ladder, I built an evaluation harness.
+\begin{itemize}[leftmargin=1.2em]
+\item EN: Same scoring: win 1 / draw 0.5 / loss 0.
+\item EN: Colors reversed for fairness.
+\item EN: Max 500 plies.
+\end{itemize}
+
+EN: Three protocols: M2M standard (100 games per pairing), H2M (10 participants), and time-scaled budgets. \\
+CN（punchline）: 这一页是我\textbf{结果可信}的担保。
+
+\section*{Scene7 — Evidence Wall + TSB strip (6:05--8:20)}
+EN: Evidence poster 1: round-robin scoreboard shows \textbf{separation}. \\
+EN: Example highlights: \textbf{L2 vs L1 = 0.85}, \textbf{L3 vs L2 = 0.75}. \\
+EN: Evidence poster 2: cost--strength curve shows \textbf{diminishing returns}. \\
+EN: TSB strip shows the trend is stable across different budgets.
+
+CN（punchline）: 结论很稳：\textbf{预算决定难度，而且收益递减}。
+
+\section*{Scene8 — Future Work (8:20--9:00)}
+EN: Future work: performance optimization, dynamic difficulty adjustment, and generalization to other board games. \\
+CN（punchline）: 路线清晰，而且仍然\textbf{可评测}。
+
+\section*{Scene9 — Closing / Handoff (9:00--9:30)}
+EN: To close: \textbf{Difficulty = computation budget}. \\
+EN: I delivered a multi-level engine, a reproducible evaluation pipeline, and evidence of separation and diminishing returns. \\
+EN: Thank you --- now I can open the live demo. Q\&A?
+
+\medskip
+CN（收尾钉一句）: 谢谢大家，我现在打开 /play 现场演示。
+
+\end{document}

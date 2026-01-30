@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
-import { useOutletContext } from "react-router-dom";
+import { useCallback } from "react";
+import { useNavigate, useOutletContext } from "react-router-dom";
 import UIStage from "../../components/presentation/UIStage";
-import { PresentationScene, SceneId } from "../../data/presentation";
+import { PresentationScene } from "../../data/presentation";
 
 type PresentationContext = {
   scene: PresentationScene;
@@ -11,24 +11,15 @@ type PresentationContext = {
 
 export default function SceneRoute() {
   const { scene, sceneT, liteMode } = useOutletContext<PresentationContext>();
-  const [audienceSelection, setAudienceSelection] = useState<string | null>(null);
-
-  // Reset/Init audience selection when scene is Audience
-  useEffect(() => {
-    if (scene.id === SceneId.Audience && !audienceSelection) {
-      const first = scene.payload.branches?.[0];
-      if (first) setAudienceSelection(first.id);
-    }
-  }, [scene.id, scene.payload, audienceSelection]);
+  const navigate = useNavigate();
+  const handleHandoff = useCallback(() => navigate("/play"), [navigate]);
 
   return (
     <UIStage
       scene={scene}
       sceneT={sceneT}
       liteMode={liteMode}
-      audienceSelection={audienceSelection}
-      onSelectBranch={setAudienceSelection}
+      onHandoff={handleHandoff}
     />
   );
 }
-

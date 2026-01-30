@@ -100,12 +100,9 @@ export function useWheelScrub(opts: WheelScrubOpts) {
   useEffect(() => {
     if (!enabled) return;
     const handler = (e: WheelEvent) => {
-      if (!stageRef.current) return;
       const target = e.target as HTMLElement | null;
       if (isFormElement(target)) return;
-      const rect = stageRef.current.getBoundingClientRect();
-      const inside = e.clientX >= rect.left && e.clientX <= rect.right && e.clientY >= rect.top && e.clientY <= rect.bottom;
-      if (!inside) return;
+      // Allow wheel globally; stageRef boundary checks caused misses in some layouts
       if (e.shiftKey && onShiftNavigate) {
         e.preventDefault();
         onShiftNavigate(e.deltaY > 0 ? "next" : "prev");

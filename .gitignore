@@ -6,3 +6,22 @@ dist
 build
 .DS_Store
 *.log
+
+# 历史文件
+.history/
+/.history
+
+# 构建产物
+*.egg-info/
+*.egg
+*.whl
+*.pyo
+*.pyd
+.Python
+
+# package文件
+*.tgz
+*.tar.gz
+*.zip
+*.rar
+*.7z

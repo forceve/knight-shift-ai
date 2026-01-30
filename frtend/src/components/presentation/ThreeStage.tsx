@@ -1,24 +1,22 @@
 import { Suspense, useMemo } from "react";
 import { Canvas } from "@react-three/fiber";
 import { EffectComposer, Bloom, Vignette, ChromaticAberration } from "@react-three/postprocessing";
-import { PresentationScene, SceneId, presentationScenes } from "../../data/presentation";
+import { AmbientPayload, PresentationScene, SceneId, presentationScenes } from "../../data/presentation";
 import AmbientScene from "./scenes/AmbientScene";
-import FreezeScene from "./scenes/FreezeScene";
+import FreezeScene from "./scenes/Freeze/index"; // Updated path
 import DialScene from "./scenes/DialScene";
-import KnobsScene from "./scenes/KnobsScene";
+import KnobsScene from "./scenes/Knobs";
 import LadderScene from "./scenes/LadderScene";
-import XRayScene from "./scenes/XRayScene";
+import XRayScene from "./scenes/XRay";
 import PipelineScene from "./scenes/PipelineScene";
 import LandscapeScene from "./scenes/LandscapeScene";
-import AudienceScene from "./scenes/AudienceScene";
-import FutureScene from "./scenes/FutureScene";
-import HandoffScene from "./scenes/HandoffScene";
+import PortalWipe from "./PortalWipe"; // Import
 
 type SceneSlot = {
   scene: PresentationScene;
+  sceneT: number;
   isActive: boolean;
   isWarmup: boolean;
-  sceneT: number;
 };
 
 type Props = {
@@ -27,14 +25,11 @@ type Props = {
   sceneT: number;
   liteMode: boolean;
   warmupSceneId: SceneId | null;
-  idleSceneT?: number;
 };
 
 function SceneRenderer({ scene, sceneT, liteMode, isActive, isWarmup }: SceneSlot & { liteMode: boolean }) {
   const commonProps = { sceneT, liteMode, isActive, warmup: isWarmup };
   switch (scene.id) {
-    case SceneId.Ambient:
-      return <AmbientScene payload={scene.payload} {...commonProps} />;
     case SceneId.Freeze:
       return <FreezeScene payload={scene.payload} {...commonProps} />;
     case SceneId.Dial:
@@ -49,12 +44,9 @@ function SceneRenderer({ scene, sceneT, liteMode, isActive, isWarmup }: SceneSlo
       return <PipelineScene payload={scene.payload} {...commonProps} />;
     case SceneId.Landscape:
       return <LandscapeScene payload={scene.payload} {...commonProps} />;
-    case SceneId.Audience:
-      return <AudienceScene {...commonProps} />;
-    case SceneId.Future:
-      return <FutureScene payload={scene.payload} {...commonProps} />;
-    case SceneId.Handoff:
-      return <HandoffScene payload={scene.payload} {...commonProps} />;
+    case SceneId.FutureLite:
+    case SceneId.Closing:
+      return null;
     default:
       return null;
   }
@@ -64,26 +56,20 @@ export default function ThreeStage({ activeScene, cachedScenes, sceneT, liteMode
   const freezeBoost = activeScene.id === SceneId.Freeze;
   const effectsEnabled = !liteMode;
   const dpr = useMemo(() => (liteMode ? [1, 1.25] : [1, 1.5]), [liteMode]);
+  const ambientScene = useMemo(() => presentationScenes.find((s) => s.id === SceneId.Ambient) as PresentationScene | undefined, []);
+  const ambientPayload = (ambientScene?.payload ?? (presentationScenes[0]?.payload as AmbientPayload)) as AmbientPayload;
 
-  const slots = useMemo(() => {
-    const map = new Map<SceneId, SceneSlot>();
-    cachedScenes.concat(activeScene).forEach((scene) => {
-      map.set(scene.id, { scene, isActive: scene.id === activeScene.id, isWarmup: false, sceneT: scene.id === activeScene.id ? sceneT : 0 });
-    });
-    if (warmupSceneId && !map.has(warmupSceneId)) {
-      const warmupScene =
-        cachedScenes.find((s) => s.id === warmupSceneId) ??
-        presentationScenes.find((s) => s.id === warmupSceneId) ??
-        activeScene;
-      map.set(warmupSceneId, { scene: warmupScene, isActive: false, isWarmup: true, sceneT: 0 });
-    } else if (warmupSceneId) {
-      const existing = map.get(warmupSceneId);
-      if (existing) {
-        map.set(warmupSceneId, { ...existing, isWarmup: true });
-      }
-    }
-    return Array.from(map.values());
-  }, [activeScene, cachedScenes, sceneT, warmupSceneId]);
+  // Transition Logic (Simple placeholder for "Portal Wipe")
+  // We need state for transition. For now, we can infer it or just pass 0.
+  // Ideally PresentationLayout controls transition state.
+  // Assuming "activeScene" changes instantly, but we want a visual wipe.
+  // The layout should handle the delay.
+  // Here we just render the PortalWipe overlay.
+  // We can drive PortalWipe using sceneT if the scene has a transition beat?
+  // Or prop passed down?
+  // Let's add a prop `transitionProgress` later. For now, render it invisible.
+  
+  const transitionProgress = 0; // Placeholder
 
   return (
     <Canvas
@@ -95,20 +81,36 @@ export default function ThreeStage({ activeScene, cachedScenes, sceneT, liteMode
     >
       <Suspense fallback={null}>
         <color attach="background" args={["#070c18"]} />
-        {slots.map((slot) => (
+        {/* Persistent ambient backdrop (knights + particles) visible only for Landscape/FutureLite/Closing (Scene 7/8/9) and Scene 0 itself */}
+        {ambientScene && (
           <group
-            key={slot.scene.id}
-            visible={slot.isActive || slot.isWarmup}
-            scale={slot.isWarmup ? 0.0001 : 1}
-            position={[0, 0, slot.isWarmup ? -30 : 0]}
+            key="ambient-bg"
+            visible={
+              activeScene.id === SceneId.Ambient ||
+              activeScene.id === SceneId.Landscape ||
+              activeScene.id === SceneId.FutureLite ||
+              activeScene.id === SceneId.Closing
+            }
           >
-            <SceneRenderer scene={slot.scene} sceneT={slot.sceneT} liteMode={liteMode} isActive={slot.isActive} isWarmup={slot.isWarmup} />
+            <AmbientScene
+              payload={ambientPayload}
+              sceneT={activeScene.id === SceneId.Ambient ? sceneT : 0}
+              liteMode={liteMode}
+              isActive={activeScene.id === SceneId.Ambient}
+              warmup={false}
+            />
           </group>
-        ))}
+        )}
+        <group key={activeScene.id} visible>
+          <SceneRenderer scene={activeScene} sceneT={sceneT} liteMode={liteMode} isActive isWarmup={false} />
+        </group>
+        
+        <PortalWipe active={false} progress={0} mode="idle" />
+
         {effectsEnabled && (
           <EffectComposer>
-            <Bloom intensity={freezeBoost ? 1.1 : 0.6} luminanceThreshold={0.12} mipmapBlur radius={0.7} />
-            <Vignette eskil offset={0.08} darkness={0.9} />
+            <Bloom intensity={freezeBoost ? 0.8 : 0.4} luminanceThreshold={0.2} mipmapBlur radius={0.7} />
+            <Vignette eskil offset={0.1} darkness={0.6} />
             {freezeBoost && <ChromaticAberration offset={[0.002, 0.0015]} radialModulation />}
           </EffectComposer>
         )}
